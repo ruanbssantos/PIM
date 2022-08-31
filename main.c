@@ -5,7 +5,7 @@ int main(){
 
     x = 1;
 
-    printf("Hello World WQQQQ %i", x);
+    printf("Hello World %i", x);
     
     return 0;
 }
