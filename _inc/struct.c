@@ -9,6 +9,7 @@
 #include <time.h> //PEGAR DATA E HORA DO SISTEMA
 #include <ctype.h> //CONTÉM FUNÇÕES DO TIPO BOOLEANN COMO ISDIGIT
 #include <stdbool.h> //LÊ BOOLEANO 
+#include <conio.h>
   
   
 typedef struct {
@@ -20,12 +21,11 @@ typedef struct {
     char HORAS[3]; 
     char MINUTOS[3]; 
     char SEGUNDOS[3]; 
-}STRC_DH;  
-
+}STRC_DH;   
 typedef struct {
     char USUARIO[11];
     int NIVEL;
-    char SENHA[20];
+    char SENHA[100];
     int STATUS;
 
 }STRC_LOGIN; 

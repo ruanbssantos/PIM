@@ -1,19 +1,7 @@
 
 #include "struct.c" //TODAS AS STRUCTS DO SISTEMA3
-//=======================================================================================================
-//FUNCTIONS PRINCIPAL
-//======================================================================================================= 
-//LIMPA O CONSOLE
-void COLOR_RED(){
-    printf("\033[0;31m");
-}
-void COLOR_GREEN(){
-    printf("\033[0;32m");
-}
-void COLOR_RESET(){
-    printf("\033[0m"); 
-}
-
+#include "variables.c" //TODAS AS STRUCTS DO SISTEMA3
+  
 //=======================================================================================================
 //FUNCTIONS PRINCIPAL
 //======================================================================================================= 
@@ -25,30 +13,51 @@ void LIMPA_CONSOLE(){
 void CABECALHO(){
  
     STRC_DH DH;
-    char color_red[] = "\033[0;31m";
-    char color_green[] = "\033[0;32m";
-    char color_yellow[] = "\033[0;33m";
-    char color_blue[] = "\033[0;34m";
-    char color_purple[] = "\033[0;35m";
-    char color_cyan[] = "\033[0;36m"; 
-    char color_reset[] = "\033[0m";
+      
     LIMPA_CONSOLE();
-  
-    
-    printf("%s=============================================================================================%s\n",color_red,color_reset);
-    printf("%s=============================================================================================%s\n",color_green,color_reset);
-    printf("%s=============================================================================================%s\n",color_yellow,color_reset);
-    printf("%s=============================================================================================%s\n",color_blue,color_reset);
-    printf("%s=============================================================================================%s\n",color_purple,color_reset);
-    printf("%s=============================================================================================%s\n",color_cyan,color_reset);
-    
- 
     DH_ATUAL(&DH);
-    printf("=============================================================================================\n");
-    printf("======== King Consulting Corporation (c). Todos os direitos reservados [Versão 1.0] =========\n");
-    printf("=============================================================================================\n");
-    printf("|Bem Vindo admin, boa tarde!  %s \n\n\n\n",DH.DH_COMPLETA);
- 
+  
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    int columns, i, contador;
+
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    columns = csbi.srWindow.Right - csbi.srWindow.Left; 
+  
+    if (columns%2 != 0) columns--;
+
+    contador  = (columns - 78) / 2;
+    //linha superior
+    printf("%s╔",color_purple);
+    for (i = 1; i <= contador; i++){
+        printf("═");
+    }
+    printf("%s KING CONSULTING CORPORATION (C). TODOS OS DIREITOS RESERVADOS [VERSÃO 1.0] %s%s",color_green,color_reset,color_purple);
+    for (i = 1; i <= contador+1; i++){
+        printf("═");
+    }
+    printf("╗%s\n",color_reset);
+
+    
+    contador  = (columns - 24) / 2;
+    //linha MEIO
+    printf("%s╟",color_purple);
+    for (i = 1; i <= contador; i++){
+        printf(" ");
+    }
+    printf("%s %s %s%s",color_yellow,DH.DH_COMPLETA,color_reset,color_purple);
+    for (i = 1; i <= contador+1; i++){
+        printf(" ");
+    }
+    printf("╢%s\n",color_reset);
+
+    
+    contador = columns - 1; 
+    //linha inferior
+    printf("%s╚",color_purple);
+    for (i = 1; i <= contador; i++){
+        printf("═");
+    }
+    printf("╝%s\n\n",color_reset); 
 
 } 
 //RETORNA DATA E HORA BR ATUAL
@@ -87,10 +96,8 @@ void LG_PRIMEIRO_ACESSO(boolean fl_mostramsg){
     char c;
     char senha[50]= "";
     int a=0;
-    
-    COLOR_GREEN();
-    printf("Atenção!\n");
-    COLOR_RESET();
+     
+    printf("%sAtenção!%s\n",color_yellow,color_reset); 
     printf("Primeiro acesso detectado, o primeiro cadastro será concedido nível administrativo...\n\n");
 
     if(fl_mostramsg == true) system("pause"); 
@@ -103,18 +110,16 @@ void LG_PRIMEIRO_ACESSO(boolean fl_mostramsg){
         i = strlen(LOGIN.USUARIO);
 
         if (i != 11){
-            COLOR_RED();
-            printf("\nErro!");
-            COLOR_RESET();
-            printf("\nO CPF deve conter onze dígitos...\n\n");
+            printf("\n%sErro!%s\n",color_red,color_reset); 
+            printf("O CPF deve conter onze dígitos...\n\n");
             system("pause");
             return LG_PRIMEIRO_ACESSO(false);
         } 
 
         for(i = 0; i < 11; i++){ 
             if (isdigit(LOGIN.USUARIO[i])==false){
-                printf("\nErro!\n");
-                printf("\nO CPF deve conter somente caracteres númericos, dígito inválido...\n\n");
+                printf("\n%sErro!%s\n",color_red,color_reset); 
+                printf("O CPF deve conter somente caracteres númericos, dígito inválido...\n\n");
                 system("pause"); 
                 return LG_PRIMEIRO_ACESSO(false); 
                 break;
@@ -123,42 +128,41 @@ void LG_PRIMEIRO_ACESSO(boolean fl_mostramsg){
         valida_cpf = 1; 
     }while (valida_cpf != 1);
 
-  // printf("\nDigite a senha: ");
+    printf("\nDigite a senha: ");
 
-  // do{
-  //     c=getch();
-  //     if(isprint(c)){
-  //         senha[a]=c;
-  //         a++;
-  //         printf("*");
-  //         strcpy(LOGIN.senha,senha);
-  //     }
-  //     else if(c==8&&a){
-  //         senha[a]='\0';
-  //         a--;
-  //         printf("\b \b");
-  //         strcpy(LOGIN.senha,senha);
-  //     }
+    do{
+        c=getch();
+        if(isprint(c)){
+            senha[a]=c;
+            a++;
+            printf("*");
+            strcpy(LOGIN.SENHA,senha);
+        }
+        else if(c==8&&a){
+            senha[a]='\0';
+            a--;
+            printf("\b \b");
+            strcpy(LOGIN.SENHA,senha);
+        }
 
-  // }while(c!=13);
+    }while(c!=13);
 
-  // LOGIN.nivel = 2;
-  // LOGIN.status = 1;
+    LOGIN.NIVEL = 2;
+    LOGIN.STATUS = 1;
 
+    printf("\n\nDeseja finalizar cadastro? %s[S/N]%s: ",color_yellow,color_reset);
 
-  // printf("\n===========================================\n");
-  // printf("\nDeseja finalizar cadastro? [S/N]: ");
+    if (tolower(getche()) =='s'){
+        arq = fopen("ARQUIVOS/Login.txt","a+b");
+        fwrite(&LOGIN,sizeof(LOGIN),1,arq);
+        fclose(arq);
+        printf("\n\nAcesso criado com sucesso...");
 
-  // if (tolower(getche()) =='s'){
-  //     arq = fopen("Login.txt","a+b");
-  //     fwrite(&LOGIN,sizeof(LOGIN),1,arq);
-  //     fclose(arq);
-  //     printf("\n\nLogin criado com sucesso...");
+    }
 
-  // }
-
-  // printf("\n \n");
-  // system("pause");
+    printf("\n \n");
+    system("pause");
 
 }
+ 
  

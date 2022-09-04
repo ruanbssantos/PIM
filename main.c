@@ -2,30 +2,22 @@
 //INCLUDES
 //=======================================================================================================
 #include "_inc/function.c" //TODAS AS STRUCTS DO SISTEMA
- 
-FILE *arq;
   
 int main(){  
     //setlocale(LC_ALL,"Portuguese"); 
-    system("king Consulting");
-     CABECALHO();
-    //FULL SCREEN
-    //keybd_event ( VK_MENU, 0x36, 0, 0 ); 
-    //keybd_event ( VK_RETURN, 0x1C, 0, 0 ); 
-    //keybd_event ( VK_RETURN, 0x1C, KEYEVENTF_KEYUP, 0 ); 
-    //keybd_event ( VK_MENU, 0x38, KEYEVENTF_KEYUP, 0 );
-  
-    // arq = fopen("Login.txt","rb");
-    // fclose(arq);
+
+    
  
-    // if(arq==NULL)
-    // {
-    //     LG_PRIMEIRO_ACESSO(true);
-    // }
+    arq = fopen("ARQUIVOS/Login.txt","rb");
+    fclose(arq);
+ 
+    if(arq==NULL){
+        LG_PRIMEIRO_ACESSO(true);
+    }
 
     // int nivel_acesso;
     // if (nivel_acesso ==2){
-    //     int op;7
+    //     int op
     //     do{
     //         CABECALHO();
 
