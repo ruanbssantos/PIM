@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "*.asp": "asp",
-        "locale.h": "c"
+        "PIM.C": "cpp",
+        "stdbool.h": "c",
+        "locale.h": "c",
+        "teste.h": "c",
+        "STRUCT.C": "cpp"
     }
 }
