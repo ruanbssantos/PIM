@@ -5,6 +5,8 @@
         "stdbool.h": "c",
         "locale.h": "c",
         "teste.h": "c",
-        "STRUCT.C": "cpp"
+        "STRUCT.C": "cpp",
+        "windows.h": "c",
+        "stdlib.h": "c"
     }
 }
