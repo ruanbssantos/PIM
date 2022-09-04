@@ -11,10 +11,9 @@ void LIMPA_CONSOLE(){
 }
 //CRIA CABECALHO NO TOPO
 void CABECALHO(){
- 
-    STRC_DH DH;
-      
+    
     LIMPA_CONSOLE();
+    STRC_DH DH;      
     DH_ATUAL(&DH);
   
     CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -27,37 +26,37 @@ void CABECALHO(){
 
     contador  = (columns - 78) / 2;
     //linha superior
-    printf("%s╔",color_purple);
+    printf("%s╔",COLOR_PURPLE);
     for (i = 1; i <= contador; i++){
         printf("═");
     }
-    printf("%s KING CONSULTING CORPORATION (C). TODOS OS DIREITOS RESERVADOS [VERSÃO 1.0] %s%s",color_green,color_reset,color_purple);
+    printf("%s KING CONSULTING CORPORATION (C). TODOS OS DIREITOS RESERVADOS [VERSÃO 1.0] %s%s",COLOR_GREEN,COLOR_RESET,COLOR_PURPLE);
     for (i = 1; i <= contador+1; i++){
         printf("═");
     }
-    printf("╗%s\n",color_reset);
+    printf("╗%s\n",COLOR_RESET);
 
     
     contador  = (columns - 24) / 2;
     //linha MEIO
-    printf("%s╟",color_purple);
+    printf("%s╟",COLOR_PURPLE);
     for (i = 1; i <= contador; i++){
         printf(" ");
     }
-    printf("%s %s %s%s",color_yellow,DH.DH_COMPLETA,color_reset,color_purple);
+    printf("%s %s %s%s",COLOR_YELLOW,DH.DH_COMPLETA,COLOR_RESET,COLOR_PURPLE);
     for (i = 1; i <= contador+1; i++){
         printf(" ");
     }
-    printf("╢%s\n",color_reset);
+    printf("╢%s\n",COLOR_RESET);
 
     
     contador = columns - 1; 
     //linha inferior
-    printf("%s╚",color_purple);
+    printf("%s╚",COLOR_PURPLE);
     for (i = 1; i <= contador; i++){
         printf("═");
     }
-    printf("╝%s\n\n",color_reset); 
+    printf("╝%s\n\n",COLOR_RESET); 
 
 } 
 //RETORNA DATA E HORA BR ATUAL
@@ -89,15 +88,10 @@ void LG_PRIMEIRO_ACESSO(boolean fl_mostramsg){
 
     STRC_LOGIN LOGIN;
 
-    int i = 0, valida_cpf = 0;
-
-    char cpf[11];
-
-    char c;
-    char senha[50]= "";
-    int a=0;
+    int i = 0, valida_cpf = 0,  a = 0; 
+    char senha[100]= "", c; 
      
-    printf("%sAtenção!%s\n",color_yellow,color_reset); 
+    printf("%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET); 
     printf("Primeiro acesso detectado, o primeiro cadastro será concedido nível administrativo...\n\n");
 
     if(fl_mostramsg == true) system("pause"); 
@@ -110,7 +104,7 @@ void LG_PRIMEIRO_ACESSO(boolean fl_mostramsg){
         i = strlen(LOGIN.USUARIO);
 
         if (i != 11){
-            printf("\n%sErro!%s\n",color_red,color_reset); 
+            printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET); 
             printf("O CPF deve conter onze dígitos...\n\n");
             system("pause");
             return LG_PRIMEIRO_ACESSO(false);
@@ -118,7 +112,7 @@ void LG_PRIMEIRO_ACESSO(boolean fl_mostramsg){
 
         for(i = 0; i < 11; i++){ 
             if (isdigit(LOGIN.USUARIO[i])==false){
-                printf("\n%sErro!%s\n",color_red,color_reset); 
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET); 
                 printf("O CPF deve conter somente caracteres númericos, dígito inválido...\n\n");
                 system("pause"); 
                 return LG_PRIMEIRO_ACESSO(false); 
@@ -150,19 +144,73 @@ void LG_PRIMEIRO_ACESSO(boolean fl_mostramsg){
     LOGIN.NIVEL = 2;
     LOGIN.STATUS = 1;
 
-    printf("\n\nDeseja finalizar cadastro? %s[S/N]%s: ",color_yellow,color_reset);
+    printf("\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
 
     if (tolower(getche()) =='s'){
-        arq = fopen("ARQUIVOS/Login.txt","a+b");
+        arq = fopen(ARQ_LOGIN,"a+b");
         fwrite(&LOGIN,sizeof(LOGIN),1,arq);
         fclose(arq);
         printf("\n\nAcesso criado com sucesso...");
-
     }
 
-    printf("\n \n");
+    printf("\n\n");
     system("pause");
 
 }
+
+void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
  
+    STRC_LOGIN LOGIN;
+     
+    char COMPARA_SENHA[100]; 
+    char SENHA[100] = "", USUARIO[20], c;
+    int a=0;
+    
+    *session = false;
+
+    printf("Digite o CPF: ");
+    gets(USUARIO); 
  
+    printf("\nDigite a senha: ");
+
+    do{
+        c=getch();
+        
+        if(isprint(c)){
+            SENHA[a]=c;
+            a++;
+            printf("*");
+            strcpy(COMPARA_SENHA,SENHA);
+        }else if(c==8 && a){
+            SENHA[a]='\0';
+            a--;
+            printf("\b \b");
+            strcpy(COMPARA_SENHA,SENHA);
+        }
+
+    }while(c!=13);
+ 
+  
+    arq = fopen(ARQ_LOGIN,"r");
+    while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
+        
+        // printf("\n %s|%s USUARIO " , USUARIO,LOGIN.USUARIO);   
+        // printf(" %i| NIVEL " ,LOGIN.NIVEL);   
+        // printf(" %s|%s|%s SENHA " , COMPARA_SENHA,SENHA,LOGIN.SENHA);   
+        // printf(" %i| STATUS \n\n" , LOGIN.STATUS);
+ 
+        if (strcmp(USUARIO,LOGIN.USUARIO) == 0 && strcmp(COMPARA_SENHA,LOGIN.SENHA) == 0 && LOGIN.STATUS == 1){ 
+            //if (strcmp(ctt.senha, "123456")==0){
+            //    fclose(arq);
+            //    alt_senha_padrao();
+            //    break;
+            //} 
+            *session_nivelAcesso = LOGIN.NIVEL;
+            *session = true;          
+            break;  
+        }
+
+    }
+    fclose(arq);
+   
+}

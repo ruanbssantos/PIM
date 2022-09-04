@@ -10,8 +10,7 @@
 #include <ctype.h> //CONTÉM FUNÇÕES DO TIPO BOOLEANN COMO ISDIGIT
 #include <stdbool.h> //LÊ BOOLEANO 
 #include <conio.h>
-  
-  
+
 typedef struct {
     char DH_COMPLETA[21];
     char DT_COMPLETA[11];
@@ -21,11 +20,13 @@ typedef struct {
     char HORAS[3]; 
     char MINUTOS[3]; 
     char SEGUNDOS[3]; 
-}STRC_DH;   
+}STRC_DH;  
+
 typedef struct {
-    char USUARIO[11];
+    char USUARIO[20];
     int NIVEL;
     char SENHA[100];
     int STATUS;
 
 }STRC_LOGIN; 
+ 

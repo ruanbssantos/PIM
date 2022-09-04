@@ -8,5 +8,6 @@
         "STRUCT.C": "cpp",
         "windows.h": "c",
         "stdlib.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

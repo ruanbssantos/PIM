@@ -2,74 +2,93 @@
 //INCLUDES
 //=======================================================================================================
 #include "_inc/function.c" //TODAS AS STRUCTS DO SISTEMA
-  
+
 int main(){  
     //setlocale(LC_ALL,"Portuguese"); 
+    boolean session = false;
+    int session_nivelAcesso = 2;
+   
+    // arq = fopen(ARQ_LOGIN,"rb"); 
+   
+    // if(arq==NULL){
+    //    LG_PRIMEIRO_ACESSO(true);
+    // }
 
-    
+    // fclose(arq);
  
-    arq = fopen("ARQUIVOS/Login.txt","rb");
-    fclose(arq);
+    // do{
+    //     CABECALHO();   
+    //     LOGIN_VALIDA_ACESSO(&session,&session_nivelAcesso); 
+    //     if (session == true){
+    //         printf("%s\n\nAcesso permitido, seja bem-vindo!\n\n%s",COLOR_GREEN,COLOR_RESET);
+    //     } else {
+    //         printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET); 
+    //         printf("Acesso negado, usuário/senha incorreto...\n\n");
+    //     }
  
-    if(arq==NULL){
-        LG_PRIMEIRO_ACESSO(true);
-    }
+    //     system ("pause");
 
-    // int nivel_acesso;
-    // if (nivel_acesso ==2){
-    //     int op
-    //     do{
-    //         CABECALHO();
+    // }while (session == 0);
+ 
+    if (session_nivelAcesso == 2){
+        char op;
+        do{
+            CABECALHO();
 
-    //         printf("1 - Cadastros\n");
-    //         printf("2 - Clientes\n");
-    //         printf("3 - Pedidos\n");
-    //         printf("4 - Funcionários\n");
-    //         printf("5 - Relatários\n");
-    //         printf("6 - Configurações\n");
-    //         printf("0 - Sair\n\n\n");
+            printf("[%s1%s] - Produtos\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s2%s] - Clientes\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s3%s] - Pedidos\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s4%s] - Funcionários\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s5%s] - Relatários\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s6%s] - Configurações\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s0%s] - Sair\n\n\n",COLOR_YELLOW,COLOR_RESET);
 
-    //         printf("Escolha uma opção: ");
-    //         scanf("%i", &op); 
+            printf("%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET); 
+            printf("Escolha uma opção acima: ");
+            op = getche();  
 
-    //         switch(op)
-    //         {
-    //             case 1:
-    //                 printf('Em CONSTRUÇÃO...');
-    //                 system("pause >nul");
-    //                 break;
-    //             case 2:
-    //                 printf('Em CONSTRUÇÃO...');
-    //                 break; 
-    //             case 3:
-    //                 printf('Em CONSTRUÇÃO...');
-    //                 break; 
-    //             case 4:
-    //                 printf('Em CONSTRUÇÃO...');
-    //                 break; 
-    //             case 5:
-    //                 printf('Em CONSTRUÇÃO...');
-    //                 break; 
-    //             case 6:
-    //                 printf('Em CONSTRUÇÃO...');
-    //                 break;
-    //             case 0: 
-    //                 printf("Obrigado pela visita, até mais...\n\n"); 
-    //                 system("pause >nul");
-    //                 exit(1);
-    //                 break;
-    //             default:
-    //                 op = -1;
-                    
-    //                 printf("\n\nOpção inválida. Selecione uma opção correta acima...\n");
-    //                 printf("\033[0m"); 
-    //                 system("pause");
-    //                 break;
-    //         }
+            if(op == "") op = "x";
+
+            switch(op)
+            {
+                case '1':
+                    printf("Em CONSTRUÇÃO...");
+                    system("pause >nul");
+                    break;
+                case '2':
+                    printf("Em CONSTRUÇÃO...");
+                    system("pause >nul");
+                    break; 
+                case '3':
+                    printf("Em CONSTRUÇÃO...");
+                    system("pause >nul");
+                    break; 
+                case '4':
+                    printf("Em CONSTRUÇÃO...");
+                    system("pause >nul");
+                    break; 
+                case '5':
+                    printf("Em CONSTRUÇÃO...");
+                    system("pause >nul");
+                    break; 
+                case '6':
+                    printf("Em CONSTRUÇÃO...");
+                    system("pause >nul");
+                    break;
+                case '0': 
+                    printf("\n\nObrigado pela visita, até mais...\n"); 
+                    exit(1);
+                    break;
+                default: 
+                    printf("\n\nOpção não reconhecida. Selecione uma opção correta acima...\n\n");
+                    //system("pause");
+                    break;
+            }
             
 
 
-    //     }while(op!='0');
-    // }
+        }while(op!='0');
+    }
+
     return 0;
 }

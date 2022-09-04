@@ -1,9 +1,14 @@
-static char color_red[] = "\033[0;31m";
-static char color_green[] = "\033[0;32m";
-static char color_yellow[] = "\033[0;33m";
-static char color_blue[] = "\033[0;34m";
-static char color_purple[] = "\033[0;35m";
-static char color_cyan[] = "\033[0;36m"; 
-static char color_reset[] = "\033[0m";
+//VARIAVEIS DE COR
+#define COLOR_RED "\033[0;31m"
+#define COLOR_GREEN "\033[0;32m"
+#define COLOR_YELLOW "\033[0;33m"
+#define COLOR_BLUE "\033[0;34m"
+#define COLOR_PURPLE "\033[0;35m"
+#define COLOR_CYAN "\033[0;36m"
+#define COLOR_RESET "\033[0m"
+
+//VARIAVEIS DE ARQUIVOS
+#define ARQ_LOGIN "ARQUIVOS/Login.bin"
+
 
 FILE *arq;
