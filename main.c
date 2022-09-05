@@ -6,29 +6,29 @@
 int main(){  
     //setlocale(LC_ALL,"Portuguese"); 
     boolean session = false;
-    int session_nivelAcesso = 2;
-   
-    // arq = fopen(ARQ_LOGIN,"rb"); 
-   
-    // if(arq==NULL){
-    //    LG_PRIMEIRO_ACESSO(true);
-    // }
+    int session_nivelAcesso ;     
 
-    // fclose(arq);
- 
-    // do{
-    //     CABECALHO();   
-    //     LOGIN_VALIDA_ACESSO(&session,&session_nivelAcesso); 
-    //     if (session == true){
-    //         printf("%s\n\nAcesso permitido, seja bem-vindo!\n\n%s",COLOR_GREEN,COLOR_RESET);
-    //     } else {
-    //         printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET); 
-    //         printf("Acesso negado, usuário/senha incorreto...\n\n");
-    //     }
- 
-    //     system ("pause");
+    arq = fopen(ARQ_LOGIN,"rb"); 
 
-    // }while (session == 0);
+    if(arq==NULL){
+       LG_PRIMEIRO_ACESSO(true);
+    }
+
+    fclose(arq);
+ 
+    do{
+        CABECALHO();   
+        LOGIN_VALIDA_ACESSO(&session,&session_nivelAcesso); 
+        if (session == true){
+            printf("%s\n\nAcesso permitido, seja bem-vindo!\n\n%s",COLOR_GREEN,COLOR_RESET);
+        } else {
+            printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET); 
+            printf("Acesso negado, usuário/senha incorreto...\n\n");
+        }
+ 
+        system ("pause");
+
+    }while (session == 0);
  
     if (session_nivelAcesso == 2){
         char op;

@@ -148,7 +148,10 @@ void LG_PRIMEIRO_ACESSO(boolean fl_mostramsg){
 
     if (tolower(getche()) =='s'){
         arq = fopen(ARQ_LOGIN,"a+b");
-        fwrite(&LOGIN,sizeof(LOGIN),1,arq);
+        fwrite(&LOGIN.USUARIO,sizeof(LOGIN.USUARIO),1,arq);
+        fwrite(&LOGIN.NIVEL,sizeof(LOGIN.NIVEL),1,arq);
+        fwrite(&LOGIN.SENHA,sizeof(LOGIN.SENHA),1,arq);
+        fwrite(&LOGIN.STATUS,sizeof(LOGIN.STATUS),1,arq);
         fclose(arq);
         printf("\n\nAcesso criado com sucesso...");
     }
@@ -191,7 +194,7 @@ void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
     }while(c!=13);
  
   
-    arq = fopen(ARQ_LOGIN,"r");
+    arq = fopen(ARQ_LOGIN,"rb"); 
     while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
         
         // printf("\n %s|%s USUARIO " , USUARIO,LOGIN.USUARIO);   
