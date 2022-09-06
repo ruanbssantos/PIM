@@ -4,6 +4,12 @@
 #include "_inc/function.c" //TODAS AS STRUCTS DO SISTEMA
 
 int main(){  
+
+    int CPAGE_UTF8 = 65001;
+    int CPAGE_DEFAULT = GetConsoleOutputCP();
+
+    SetConsoleOutputCP(CPAGE_UTF8);
+
     //setlocale(LC_ALL,"Portuguese"); 
     boolean session = false;
     int session_nivelAcesso ;     
@@ -89,6 +95,9 @@ int main(){
 
         }while(op!='0');
     }
+
+    SetConsoleOutputCP(CPAGE_DEFAULT);
+
 
     return 0;
 }
