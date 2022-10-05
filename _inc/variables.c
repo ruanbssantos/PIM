@@ -5,7 +5,7 @@
 #define COLOR_BLUE "\033[0;34m"
 #define COLOR_PURPLE "\033[0;35m"
 #define COLOR_CYAN "\033[0;36m"
-#define COLOR_RESET "\033[0m" 
+#define COLOR_RESET "\033[0m"
 
 //VARIAVEIS DE ARQUIVOS
 #define ARQ_LOGIN "ARQUIVOS/Login.bin"

@@ -7,9 +7,7 @@
         "teste.h": "c",
         "STRUCT.C": "cpp",
         "windows.h": "c",
-        "stdlib.h": "c",
-        "string.h": "c",
-        "ctype.h": "c"
+        "stdlib.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
