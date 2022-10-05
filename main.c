@@ -4,22 +4,21 @@
 #include "_inc/function.c" //TODAS AS STRUCTS DO SISTEMA
 
 int main(){  
-
+  
     int CPAGE_UTF8 = 65001;
     int CPAGE_DEFAULT = GetConsoleOutputCP();
 
     SetConsoleOutputCP(CPAGE_UTF8);
-
-    //setlocale(LC_ALL,"Portuguese"); 
+ 
     boolean session = false;
-    int session_nivelAcesso ;     
+    int session_nivelAcesso;       
 
     arq = fopen(ARQ_LOGIN,"rb"); 
 
     if(arq==NULL){
-       LG_PRIMEIRO_ACESSO(true);
-    }
-
+       CADASTRA_USUARIO(true);
+    }  
+    
     fclose(arq);
  
     do{
@@ -41,12 +40,11 @@ int main(){
         do{
             CABECALHO();
 
-            printf("[%s1%s] - Produtos\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s2%s] - Clientes\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s3%s] - Pedidos\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s4%s] - Funcionários\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s5%s] - Relatários\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s6%s] - Configurações\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s1%s] - Usuários\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s2%s] - Salas\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s4%s] - Relatórios\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s5%s] - Alterar senha\n",COLOR_YELLOW,COLOR_RESET); 
             printf("[%s0%s] - Sair\n\n\n",COLOR_YELLOW,COLOR_RESET);
 
             printf("%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET); 
