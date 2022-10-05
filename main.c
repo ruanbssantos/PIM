@@ -16,7 +16,7 @@ int main(){
     arq = fopen(ARQ_LOGIN,"rb"); 
 
     if(arq==NULL){
-       CADASTRA_USUARIO(true);
+       LG_PRIMEIRO_ACESSO(true);
     }
 
     fclose(arq);
