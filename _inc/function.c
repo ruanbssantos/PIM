@@ -123,7 +123,7 @@ void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
 
     *session = false;
 
-    printf("Digite o CPF: ");
+    printf("Digite o email: ");
     gets(USUARIO);
 
     printf("\nDigite a senha: ");
@@ -148,11 +148,6 @@ void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
 
     arq = fopen(ARQ_LOGIN,"rb");
     while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
-
-        // printf("\n %s|%s USUARIO " , USUARIO,LOGIN.USUARIO);
-        // printf(" %i| NIVEL " ,LOGIN.NIVEL);
-        // printf(" %s|%s|%s SENHA " , COMPARA_SENHA,SENHA,LOGIN.SENHA);
-        // printf(" %i| STATUS \n\n" , LOGIN.STATUS);
 
         if (strcmp(USUARIO,LOGIN.USUARIO) == 0 && strcmp(COMPARA_SENHA,LOGIN.SENHA) == 0 && LOGIN.STATUS == 1){
             //if (strcmp(ctt.senha, "123456")==0){
@@ -207,6 +202,41 @@ int VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
     return emailValidado_fl;
 }
 
+//=======================================================================================================
+//USUÁRIOS
+//=======================================================================================================
+void MENU_USUARIOS(){ 
+    char op;
+    do{
+        CABECALHO();
+        printf("[%s1%s] - Cadastrar\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Pesquisar\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s0%s] - Voltar\n",COLOR_YELLOW,COLOR_RESET);
+    
+        printf("Escolha uma opção acima: ");
+        op = getchar();  
+
+        if(op == "") op = "x";
+
+        switch(op)
+        {
+            case '1':
+                printf("Em CONSTRUÇÃO...");
+                system("pause >nul");
+                break;
+            case '2':
+                printf("Em CONSTRUÇÃO...");
+                system("pause");
+                break; 
+            default: 
+                printf("\n\nOpção não reconhecida. Selecione uma opção correta acima...\n\n");
+                system("pause");
+                break;
+            }
+            
+    }while(op!='0');
+    return 0;
+}
 //=======================================================================================================
 //USUÁRIOS
 //=======================================================================================================
@@ -314,17 +344,25 @@ void CADASTRA_USUARIO(boolean fl_mostramsg){
 
         if(confirm == 's'){
             arq = fopen(ARQ_LOGIN,"a+b");
-            fwrite(&LOGIN.USUARIO,sizeof(LOGIN.USUARIO),1,arq);
-            fwrite(&LOGIN.NOME_COMPLETO,sizeof(LOGIN.NOME_COMPLETO),1,arq);
-            fwrite(&LOGIN.SENHA,sizeof(LOGIN.SENHA),1,arq);
-            fwrite(&LOGIN.CELULAR,sizeof(LOGIN.CELULAR),1,arq);
-            fwrite(&LOGIN.NIVEL,sizeof(LOGIN.NIVEL),1,arq);        
-            fwrite(&LOGIN.STATUS,sizeof(LOGIN.STATUS),1,arq);
+            fwrite(&LOGIN,sizeof(LOGIN),1,arq);
             fclose(arq);
             printf("\n\nAcesso criado com sucesso...");
         }
 
     } while(confirm != 's' && confirm != 'n');
+
+    arq = fopen(ARQ_LOGIN,"rb");
+    while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
+
+        printf("\n USUARIO %s",LOGIN.USUARIO);
+        printf("\n NOME_COMPLETO %s",LOGIN.NOME_COMPLETO);
+        printf("\n SENHA %s",LOGIN.SENHA);
+        printf("\n CELULAR %s",LOGIN.CELULAR);
+        printf("\n NIVEL %i",LOGIN.NIVEL);
+        printf("\n STATUS %i\n\n ",LOGIN.STATUS);
+
+    }
+    fclose(arq);
 
     printf("\n\n");
     system("pause");
