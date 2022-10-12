@@ -10,11 +10,19 @@ int main(){
 
     SetConsoleOutputCP(CPAGE_UTF8);
  
+<<<<<<< HEAD
     //boolean session = false;
     //int session_nivelAcesso;       
     
     boolean session = true;
     int session_nivelAcesso = 2;       
+=======
+    boolean session = false;
+    int session_nivelAcesso;  
+
+    session = true;
+    session_nivelAcesso = 2;       
+>>>>>>> 2a079564791ebe5e4ce3f1a1dd012356746105cf
 
     arq = fopen(ARQ_LOGIN,"rb"); 
     
@@ -63,15 +71,14 @@ int main(){
 
             printf("%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET); 
             printf("Escolha uma opção acima: ");
-            op = getche();  
+            op = getchar();  
 
             if(op == "") op = "x";
 
             switch(op)
             {
                 case '1':
-                    printf("Em CONSTRUÇÃO...");
-                    system("pause >nul");
+                    //MENU_USUARIOS();
                     break;
                 case '2':
                     printf("Em CONSTRUÇÃO...");
@@ -98,8 +105,6 @@ int main(){
                     exit(1);
                     break;
                 default: 
-                    printf("\n\nOpção não reconhecida. Selecione uma opção correta acima...\n\n");
-                    //system("pause");
                     break;
             }
             
