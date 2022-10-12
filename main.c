@@ -10,19 +10,11 @@ int main(){
 
     SetConsoleOutputCP(CPAGE_UTF8);
  
-<<<<<<< HEAD
     //boolean session = false;
     //int session_nivelAcesso;       
     
     boolean session = true;
     int session_nivelAcesso = 2;       
-=======
-    boolean session = false;
-    int session_nivelAcesso;  
-
-    session = true;
-    session_nivelAcesso = 2;       
->>>>>>> 2a079564791ebe5e4ce3f1a1dd012356746105cf
 
     arq = fopen(ARQ_LOGIN,"rb"); 
     
