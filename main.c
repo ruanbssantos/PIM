@@ -10,30 +10,44 @@ int main(){
 
     SetConsoleOutputCP(CPAGE_UTF8);
  
-    boolean session = false;
-    int session_nivelAcesso;       
+    //boolean session = false;
+    //int session_nivelAcesso;       
+    
+    boolean session = true;
+    int session_nivelAcesso = 2;       
 
     arq = fopen(ARQ_LOGIN,"rb"); 
+    
+    // STRC_LOGIN LOGIN;
+    // while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
 
+    //     printf("\n USUARIO %s" ,LOGIN.USUARIO);
+    //     printf("\n NOME_COMPLETO %s" ,LOGIN.NOME_COMPLETO);
+    //     printf("\n SENHA %s" ,LOGIN.SENHA);
+    //     printf("\n CELULAR %s" ,LOGIN.CELULAR);
+    //     printf("\n NIVEL %i" ,LOGIN.NIVEL);
+    //     printf("\n STATUS %i" ,LOGIN.STATUS);
+    // }
+     
     if(arq==NULL){
        CADASTRA_USUARIO(true);
     }
 
     fclose(arq);
  
-    do{
-        CABECALHO();   
-        LOGIN_VALIDA_ACESSO(&session,&session_nivelAcesso); 
-        if (session == true){
-            printf("%s\n\nAcesso permitido, seja bem-vindo!\n\n%s",COLOR_GREEN,COLOR_RESET);
-        } else {
-            printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET); 
-            printf("Acesso negado, usuário/senha incorreto...\n\n");
-        }
+    // do{
+    //     CABECALHO();   
+    //     LOGIN_VALIDA_ACESSO(&session,&session_nivelAcesso); 
+    //     if (session == true){
+    //         printf("%s\n\nAcesso permitido, seja bem-vindo!\n\n%s",COLOR_GREEN,COLOR_RESET);
+    //     } else {
+    //         printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET); 
+    //         printf("Acesso negado, usuário/senha incorreto...\n\n");
+    //     }
  
-        system ("pause");
+    //     system ("pause");
 
-    }while (session == 0);
+    // }while (session == 0);
  
     if (session_nivelAcesso == 2){
         char op;

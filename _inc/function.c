@@ -179,9 +179,9 @@ int VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
         printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
         printf("O e-mail é obrigatório...\n\n");
         emailValidado_fl = false;
-    }else if (strlen(email) > 200){
+    }else if (strlen(email) > 100){
         printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-        printf("Máximo de 200 caracteres permitidos...\n\n");
+        printf("Máximo de 100 caracteres permitidos...\n\n");
         emailValidado_fl = false;
     } else {  
         for (int i=0; i < strlen(email); i++) {
@@ -303,7 +303,7 @@ void CADASTRA_USUARIO(boolean fl_mostramsg){
 
     }while(validaCelular == false);
     strcpy(LOGIN.CELULAR,CELULAR);
-    printf("Celular: %s | %i",LOGIN.CELULAR);
+    //printf("Celular: %s | %i",LOGIN.CELULAR);
       
     LOGIN.NIVEL = 2;
     LOGIN.STATUS = 1;

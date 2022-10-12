@@ -24,8 +24,8 @@ typedef struct {
 }STRC_DH;
 
 typedef struct {
-    char USUARIO[250];
-    char NOME_COMPLETO[250];
+    char USUARIO[100];
+    char NOME_COMPLETO[100];
     char SENHA[100]; 
     char CELULAR[15];
     int NIVEL;    
