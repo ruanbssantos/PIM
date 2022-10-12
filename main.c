@@ -16,8 +16,7 @@ int main(){
     boolean session = true;
     int session_nivelAcesso = 2;       
 
-    arq = fopen(ARQ_LOGIN,"rb"); 
-    
+    arq = fopen(ARQ_LOGIN,"rb");  
     // STRC_LOGIN LOGIN;
     // while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
 
@@ -30,9 +29,13 @@ int main(){
     // }
      
     if(arq==NULL){
-       CADASTRA_USUARIO(true);
-    }
-
+        boolean cadastroFinalizado;
+        CADASTRA_USUARIO(true, &cadastroFinalizado);
+        if(cadastroFinalizado == false){
+            printf("\n\nObrigado pela visita, até mais...\n"); 
+            exit(1);
+        }
+    } 
     fclose(arq);
  
     // do{
@@ -50,61 +53,63 @@ int main(){
     // }while (session == 0);
  
     if (session_nivelAcesso == 2){
-        char op;
+        int op;
         do{
-            CABECALHO();
+            CABECALHO(); 
 
             printf("[%s1%s] - Usuários\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s2%s] - Salas\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s4%s] - Relatórios\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s5%s] - Alterar senha\n",COLOR_YELLOW,COLOR_RESET); 
-            printf("[%s0%s] - Sair\n\n\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s0%s] - Sair",COLOR_YELLOW,COLOR_RESET);
 
-            printf("%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET); 
+            printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET); 
             printf("Escolha uma opção acima: ");
-            op = getchar();  
-
-            if(op == "") op = "x";
-
+            scanf("%i",&op);
+            fflush(stdin);  
+ 
             switch(op)
             {
-                case '1':
-                    //MENU_USUARIOS();
+                case 1:
+                    MENU_USUARIOS();
                     break;
-                case '2':
+                case 2:
                     printf("Em CONSTRUÇÃO...");
                     system("pause >nul");
                     break; 
-                case '3':
+                case 3:
                     printf("Em CONSTRUÇÃO...");
                     system("pause >nul");
                     break; 
-                case '4':
+                case 4:
                     printf("Em CONSTRUÇÃO...");
                     system("pause >nul");
                     break; 
-                case '5':
+                case 5:
                     printf("Em CONSTRUÇÃO...");
                     system("pause >nul");
                     break; 
-                case '6':
+                case 6:
                     printf("Em CONSTRUÇÃO...");
                     system("pause >nul");
                     break;
-                case '0': 
+                case 0: 
                     printf("\n\nObrigado pela visita, até mais...\n"); 
                     exit(1);
                     break;
                 default: 
+                    printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                    system("pause");
                     break;
             }
             
 
 
-        }while(op!='0');
+        }while(op!=0);
     }
-
+ 
     SetConsoleOutputCP(CPAGE_DEFAULT);
 
 

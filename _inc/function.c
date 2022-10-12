@@ -67,8 +67,8 @@ void DH_ATUAL(STRC_DH *P){
     struct tm * STRC_TEMPO;
 
     time(&DH);
-    STRC_TEMPO = localtime(&DH); 
-    
+    STRC_TEMPO = localtime(&DH);
+
     strftime(P->DH_COMPLETA, sizeof(P->DH_COMPLETA), "%d/%m/%Y  %H:%M:%S",  STRC_TEMPO);
     strftime(P->DT_COMPLETA, sizeof(P->DT_COMPLETA), "%d/%m/%Y",  STRC_TEMPO);
     strftime(P->DIA, sizeof(P->DIA), "%d",  STRC_TEMPO);
@@ -91,8 +91,8 @@ void DH_ATUAL(STRC_DH *P){
 
     // int d    = 30   ; //Day     1-31
     // int m    = 13  ; //Month   1-12`
-    // int y    = 9999 ; //Year    2013`  
-    // int weekday  = (d += m < 3 ? y-- : y - 2, 23*m/9 + d + 4 + y/4- y/100 + y/400)%7;  
+    // int y    = 9999 ; //Year    2013`
+    // int weekday  = (d += m < 3 ? y-- : y - 2, 23*m/9 + d + 4 + y/4- y/100 + y/400)%7;
     // printf("\n %i", weekday);
     // printf("\n\ntm_mday=%i", STRC_TEMPO->tm_mday);
     // printf("\ntm_sec=%i", STRC_TEMPO->tm_sec);
@@ -104,8 +104,8 @@ void DH_ATUAL(STRC_DH *P){
     // printf("\ntm_wday=%i", STRC_TEMPO->tm_wday);
     // printf("\ntm_yday=%i", STRC_TEMPO->tm_yday);
     // printf("\ntm_isdst=%i", STRC_TEMPO->tm_isdst);
-   
- 
+
+
 
 }
 
@@ -166,7 +166,7 @@ void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
 }
 
 int VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
- 
+
 
     int count_arroba = 0, count_espacoBranco = 0, count_pontos = 0, conta_pontos_fl = 0, ultimoDigito;
 
@@ -178,7 +178,7 @@ int VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
         printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
         printf("Máximo de 100 caracteres permitidos...\n\n");
         emailValidado_fl = false;
-    } else {  
+    } else {
         for (int i=0; i < strlen(email); i++) {
             //printf("\n%i | %c | %d",i,email[i],isalpha(email[i]));
             if(email[i] == '@'){
@@ -188,183 +188,306 @@ int VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
             if(email[i] == ' ') count_espacoBranco++;
             if(email[i] == '.' && conta_pontos_fl == true) count_pontos++;
         }
- 
+
         if(isalpha(email[strlen(email)-1]) == 0) emailValidado_fl = false;
         if(count_arroba == 0 || count_espacoBranco > 0 || count_pontos == 0) emailValidado_fl = false;
 
         if(emailValidado_fl == false){
             printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
             printf("E-mail informado inválido...\n\n");
+        } else {
+            STRC_LOGIN LOGIN;
+            arq = fopen(ARQ_LOGIN,"rb");
+            if(arq  != NULL) {
+                while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
+                    if (strcmp(email,LOGIN.USUARIO) == 0 ){
+                        emailValidado_fl = false;
+                        printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                        printf("E-mail já cadastrado na base de dados...\n\n");
+                        break;
+                    }
+
+                }
+            }
+            fclose(arq);
         }
- 
+
     }
-  
+
     return emailValidado_fl;
 }
 
 //=======================================================================================================
-//USUÁRIOS
+//MENUS
 //=======================================================================================================
-void MENU_USUARIOS(){ 
-    char op;
+void MENU_USUARIOS(){
+    int op;
     do{
         CABECALHO();
         printf("[%s1%s] - Cadastrar\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s2%s] - Pesquisar\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s0%s] - Voltar\n",COLOR_YELLOW,COLOR_RESET);
-    
-        printf("Escolha uma opção acima: ");
-        op = getchar();  
+        printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
 
-        if(op == "") op = "x";
+        printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Escolha uma opção acima: ");
+        scanf("%i",&op);
+        fflush(stdin);
 
         switch(op)
         {
-            case '1':
-                printf("Em CONSTRUÇÃO...");
-                system("pause >nul");
+            case 1:
+                boolean cadastroFinalizado;
+                CADASTRA_USUARIO(false, &cadastroFinalizado);
                 break;
-            case '2':
-                printf("Em CONSTRUÇÃO...");
+            case 2:
+                printf("Em CONSTRUÇÃO...\n");
                 system("pause");
-                break; 
-            default: 
-                printf("\n\nOpção não reconhecida. Selecione uma opção correta acima...\n\n");
+                break;
+            case 0:
+                return 0;
+                break;
+            default:
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
                 system("pause");
                 break;
             }
-            
-    }while(op!='0');
+
+    }while(op!=0);
     return 0;
 }
 //=======================================================================================================
 //USUÁRIOS
 //=======================================================================================================
-void CADASTRA_USUARIO(boolean fl_mostramsg){
+void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
     CABECALHO();
+    printf("%sUsuários >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+
+    *cadastroFinalizado = false;
 
     STRC_LOGIN LOGIN;
 
     int i = 0;
-    char senha[100]= "", c, confirm;
+    char confirm;
 
-    printf("%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-    printf("Primeiro acesso detectado, o primeiro cadastro será concedido nível administrativo...\n\n");
-
-    if(fl_mostramsg == true) system("pause");
-
-    boolean validaEmail = false;
+    if(fl_primeiroAcesso == true){
+        printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Primeiro acesso detectado, o primeiro cadastro será concedido nível administrativo...\n");
+        system("pause");
+        printf("\n");
+    } else {
+        printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Digite ""%s0%s"" para retornar ao menu anterior...\n",COLOR_YELLOW,COLOR_RESET);
+    }
 
     //EMAIL
-    do{ 
-        printf("\n\nDigite o seu email: ");
+    boolean validaEmail = false;
+    do{
+        printf("\nDigite o email: ");
         gets(LOGIN.USUARIO);
+        if(strcmp(LOGIN.USUARIO,"0") == 0) return 0;
         validaEmail = VALIDA_EMAIL(true,LOGIN.USUARIO);
     }while (validaEmail == false);
 
     //SENHA
+    char senha[100]="", confirmaSenha[100]="", caracter;
+    boolean validaSenha = false;
     do{
+        i = 0;
         printf("\nDigite a senha: ");
-        do{ 
-            c=getch();
-
-            //printf("\n\nValor= %c | %i",c, c);
-            if(c!=13){
-                if(isprint(c)){
-                    senha[i]=c;
+        do{
+            caracter=getch();
+            if(caracter!=13){
+                if(isprint(caracter)){
+                    senha[i]=caracter;
                     i++;
                     printf("*");
-                    //strcpy(LOGIN.SENHA,senha);
-                }else if(c==8&&i){
+                }else if(caracter==8&&i){
                     senha[i]='\0';
                     i--;
                     printf("\b \b");
-                    //strcpy(LOGIN.SENHA,senha);
                 }
             }
 
-        }while(c!=13); 
+        }while(caracter!=13);
 
         if(strlen(senha) == 0){
-            printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+            printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
             printf("A senha é obrigatória...\n\n");
-        } 
+        } else {
+            if(strcmp(senha,"0") == 0) return 0;
 
-    }while(strlen(senha) == 0);
+            i = 0;
+            printf("\n\nConfirme a senha: ");
+            do{
+                caracter=getch();
+                if(caracter!=13){
+                    if(isprint(caracter)){
+                        confirmaSenha[i]=caracter;
+                        i++;
+                        printf("*");
+                    }else if(caracter==8&&i){
+                        confirmaSenha[i]='\0';
+                        i--;
+                        printf("\b \b");
+                    }
+                }
+
+            }while(caracter!=13);
+            if(strcmp(confirmaSenha,"0") == 0) return 0;
+
+            if(strcmp(senha,confirmaSenha) != 0 ){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("As senhas são diferentes...\n\n");
+                memset(senha, 0, 100);
+                memset(confirmaSenha, 0, 100);
+            } else {
+                validaSenha = true;
+            }
+        }
+
+    }while(validaSenha == false);
     strcpy(LOGIN.SENHA,senha);
-    printf("\nSenha: %s",LOGIN.SENHA);
 
     //NOME COMPLETO
+    int count_espacoBranco, count_numeros;
+    boolean validaNome = false;
     do{
-        printf("\n\nDigite o nome: ");
+        i = 0, count_espacoBranco = 0, count_numeros = 0;
+        printf("\n\nDigite o nome completo: ");
         gets(LOGIN.NOME_COMPLETO);
-
         if(strlen(LOGIN.NOME_COMPLETO) == 0){
             printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
             printf("O nome é obrigatório...\n\n");
-        } 
+        } else {
+            if(strcmp(LOGIN.NOME_COMPLETO,"0") == 0) return 0;
 
-    }while(strlen(LOGIN.NOME_COMPLETO) == 0);
-    printf("Nome Completo: %s",LOGIN.NOME_COMPLETO);
+            for (i=0; i < strlen(LOGIN.NOME_COMPLETO); i++) {
+                if(isalpha(LOGIN.NOME_COMPLETO[i]) == 0){
+                    if(LOGIN.NOME_COMPLETO[i] == ' ') count_espacoBranco++;
+                    else{
+                        count_numeros++;
+                        break;
+                    }
+                } else {
+                    LOGIN.NOME_COMPLETO[i] = toupper(LOGIN.NOME_COMPLETO[i]);
+                }                
+            }
+
+            if(isalpha(LOGIN.NOME_COMPLETO[strlen(LOGIN.NOME_COMPLETO)-1]) == 0) count_espacoBranco = 0;
+
+            if(count_numeros > 0){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Nome deve conter somente letras de A-Z...\n\n");
+            }else if(count_espacoBranco == 0){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Nome inválido, digite o nome completo...\n\n");
+            }else{
+                validaNome = true;
+            }
+        }
+
+    }while(validaNome == false);
 
     //CELULAR
     char CELULAR[15];
-    boolean validaCelular;      
+    boolean validaCelular;
     do{
         validaCelular = true;
-        printf("\n\nDigite o celular com DDD (somente números): ");
-        gets(CELULAR);
-        if(strlen(CELULAR) > 0){
-            if(strlen(CELULAR) < 11 || strlen(CELULAR) > 11){ 
+        printf("\nDigite o celular com DDD (somente números): ");
+        gets(LOGIN.CELULAR);
+        if(strlen(LOGIN.CELULAR) > 0){
+            if(strcmp(LOGIN.CELULAR,"0") == 0) return 0;
+            if(strlen(LOGIN.CELULAR) < 11 || strlen(LOGIN.CELULAR) > 11){
                 printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                 printf("Número de celular deve possuir 11 dígitos...\n\n");
                 validaCelular = false;
             } else {
-                for (i=0; i < strlen(CELULAR); i++) { 
-                    if(isdigit(CELULAR[i]) == 0){ 
+                for (i=0; i < strlen(LOGIN.CELULAR); i++) {
+                    if(isdigit(LOGIN.CELULAR[i]) == 0){
                         printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                         printf("Celular deve conter somente números de 0-9...\n\n");
                         validaCelular = false;
                         break;
-                    } 
+                    }
                 }
-            }     
-        }  
+            }
+        }
 
     }while(validaCelular == false);
-    strcpy(LOGIN.CELULAR,CELULAR);
-    //printf("Celular: %s | %i",LOGIN.CELULAR);
-      
-    LOGIN.NIVEL = 2;
+
+    //NIVEL
+    if(fl_primeiroAcesso == true) {
+        LOGIN.NIVEL = 2;
+    } else{
+        boolean validaNivel;
+        do{
+            printf("\nEscolha o tipo de usuário:\n");
+            printf("[%s1%s] - Comum\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s2%s] - Administrativo\n",COLOR_YELLOW,COLOR_RESET);
+
+            printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Escolha uma opção acima: ");
+            scanf("%i",&LOGIN.NIVEL);
+            fflush(stdin);
+
+            switch(LOGIN.NIVEL)
+            {
+                case 1: case 2:
+                    validaNivel = true;
+                    break;
+                case 0:
+                    return 0;
+                default:
+                    validaNivel = false;
+                    printf("\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                    system("pause");
+                    break;
+                }
+
+        }while(validaNivel == false);
+    }
+
+    //STATUS SEMPRE ATIVO
     LOGIN.STATUS = 1;
- 
+
     do{
-        printf("\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+        CABECALHO();
+        printf("%sUsuários >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+
+        printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.NOME_COMPLETO);
+        printf("\n\n%sEmail:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.USUARIO);
+        printf("\n\n%sCelular:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.CELULAR);
+        printf("\n\n%sNível:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.NIVEL==1?"Comum":"Administrativo");
+        //printf("\n\n%sSenha:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.SENHA);
+
+        printf("\n\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
         confirm = tolower(getche());
 
         if(confirm == 's'){
             arq = fopen(ARQ_LOGIN,"a+b");
             fwrite(&LOGIN,sizeof(LOGIN),1,arq);
             fclose(arq);
-            printf("\n\nAcesso criado com sucesso...");
+            printf("\n\nUsuário criado com sucesso...");
+            *cadastroFinalizado = true;
         }
 
     } while(confirm != 's' && confirm != 'n');
 
-    arq = fopen(ARQ_LOGIN,"rb");
-    while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
-
-        printf("\n USUARIO %s",LOGIN.USUARIO);
-        printf("\n NOME_COMPLETO %s",LOGIN.NOME_COMPLETO);
-        printf("\n SENHA %s",LOGIN.SENHA);
-        printf("\n CELULAR %s",LOGIN.CELULAR);
-        printf("\n NIVEL %i",LOGIN.NIVEL);
-        printf("\n STATUS %i\n\n ",LOGIN.STATUS);
-
-    }
-    fclose(arq);
+    // arq = fopen(ARQ_LOGIN,"rb");
+    // while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
+    //     printf("\n USUARIO %s",LOGIN.USUARIO);
+    //     printf("\n NOME_COMPLETO %s",LOGIN.NOME_COMPLETO);
+    //     printf("\n SENHA %s",LOGIN.SENHA);
+    //     printf("\n CELULAR %s",LOGIN.CELULAR);
+    //     printf("\n NIVEL %i",LOGIN.NIVEL);
+    //     printf("\n STATUS %i\n\n ",LOGIN.STATUS);
+    // }
+    // fclose(arq);
 
     printf("\n\n");
     system("pause");
+    return 0;
 
 }
