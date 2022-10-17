@@ -181,7 +181,6 @@ void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
     fclose(arq);
 
 }
-
 int VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
 
 
@@ -297,7 +296,7 @@ void MENU_USUARIOS(){
             case 1: case 2: case 3:
                 LISTAR_USUARIOS(opAux);
                 break;
-            case 0: 
+            case 0:
                 goto MENU_PRINCIPAL;
                 break;
             default:
@@ -567,23 +566,22 @@ void LISTAR_USUARIOS(int op){
         arq = fopen(ARQ_LOGIN,"rb");
 
         if(op != 3){
-            
             printf("\nDigite o %s: ", op==1?"nome":"e-mail");
             gets(buscar);
         }
 
         while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
- 
+
             if (op == 1) {
                 if(strcmp(buscar,LOGIN.NOME_COMPLETO) == 0){
                     PRINTAR_USUARIO(&LOGIN);
                     count_usuario++;
-                } 
+                }
             } else if (op == 2){
                 if(strcmp(buscar,LOGIN.USUARIO) == 0){
                     PRINTAR_USUARIO(&LOGIN);
                     count_usuario++;
-                } 
+                }
             } else {
                 PRINTAR_USUARIO(&LOGIN);
                 count_usuario++;
@@ -594,26 +592,59 @@ void LISTAR_USUARIOS(int op){
         if(count_usuario == 0){
             printf("\n%sAviso!%s\n",COLOR_YELLOW,COLOR_RESET);
             printf("Nenhum usuário encontrado!\n");
-        } 
- 
+        }
+
         printf("\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
         printf("Deseja alterar o usuário?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
         confirm = tolower(getche());
 
 
         if(confirm == 's'){
-            
+            ALTERAR_USUARIO(0);
+        } else {
+            printf("\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+            printf("Deseja realizar uma nova consulta?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+            confirm = tolower(getche());
         }
-        
-        printf("\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
-        printf("Deseja realizar uma nova consulta?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
-        confirm = tolower(getche());
 
-    } while(confirm != 's' && confirm != 'n');
+
+
+    } while(confirm == 's');
 
     system("pause > null");
     return 0;
 }
+
+void ALTERAR_USUARIO(boolean fl_criaCabecalho){
+    STRC_LOGIN LOGIN; 
+    char buscar[100];
+
+    if(fl_criaCabecalho == 1){  
+        CABECALHO();
+        printf("%sMenu inicial > Usuários >%s %sAlterar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+    } else {
+        printf("\n\n")
+    }
+
+    printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+    printf("\nDigite o e-mail do usuário que deseja alterar: ");
+    gets(buscar);
+
+    arq = fopen(ARQ_LOGIN,"rb");
+  
+    while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
+        if(strcmp(buscar,LOGIN.USUARIO) == 0){
+            PRINTAR_USUARIO(&LOGIN);
+            count_usuario++;
+        }
+    }
+
+    fclose(arq);
+
+    system("pause");
+}
+
+
 
 void PRINTAR_USUARIO(STRC_LOGIN *USER){
     printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,USER->NOME_COMPLETO);
