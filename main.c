@@ -47,7 +47,7 @@ int main(){
         do{
             CABECALHO(); 
 
-            printf("[%s1%s] - Usuários\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s1%s] - Colaboradores\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s2%s] - Salas\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s4%s] - Relatórios\n",COLOR_YELLOW,COLOR_RESET);
