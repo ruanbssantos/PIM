@@ -536,7 +536,6 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
     return 0;
 
 }
-
 void LISTAR_USUARIOS(int op){
 
     STRC_LOGIN LOGIN;
@@ -608,7 +607,6 @@ void LISTAR_USUARIOS(int op){
     system("pause > null");
     return 0;
 }
-
 void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     STRC_LOGIN LOGIN; 
     char buscar[100];
@@ -717,8 +715,12 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     system("pause");
     
 }
-void ALTERA_ARQUIVO_USUARIO(STRC_LOGIN *USER){
-
+void FORMULARIO_USUARIO(char campo[]){
+    if (strcmp("NOMECOMPLETO",campo) == 0){
+        printf("Teste entrou\n");
+    } else {
+        printf("Caiu no else");
+    }
 }
 void PRINTAR_USUARIO(STRC_LOGIN *USER){
     printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,USER->NOME_COMPLETO);
