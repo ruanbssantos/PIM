@@ -17,16 +17,6 @@ int main(){
     int session_nivelAcesso = 2;       
 
     arq = fopen(ARQ_LOGIN,"rb");  
-    // STRC_LOGIN LOGIN;
-    // while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
-
-    //     printf("\n USUARIO %s" ,LOGIN.USUARIO);
-    //     printf("\n NOME_COMPLETO %s" ,LOGIN.NOME_COMPLETO);
-    //     printf("\n SENHA %s" ,LOGIN.SENHA);
-    //     printf("\n CELULAR %s" ,LOGIN.CELULAR);
-    //     printf("\n NIVEL %i" ,LOGIN.NIVEL);
-    //     printf("\n STATUS %i" ,LOGIN.STATUS);
-    // }
      
     if(arq==NULL){
         boolean cadastroFinalizado;

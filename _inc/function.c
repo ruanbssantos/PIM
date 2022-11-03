@@ -110,8 +110,6 @@ void DH_ATUAL(STRC_DH *P){
 }
 //CRIA LINHA DIVISORIA
 void SEPARADOR(){
-
-
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     int columns, i, contador;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -121,11 +119,11 @@ void SEPARADOR(){
 
     contador = columns - 1;
     //linha inferior
-    printf("%s╾",COLOR_RESET);
+    printf("╾");
     for (i = 1; i <= contador; i++){
         printf("┈");
     }
-    printf("╼%s",COLOR_RESET);
+    printf("╼");
 }
 //=======================================================================================================
 //FUNCTIONS VALIDAÇÃO
@@ -232,13 +230,13 @@ int VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
 
     return emailValidado_fl;
 }
-
 //=======================================================================================================
 //MENUS
 //=======================================================================================================
 void MENU_USUARIOS(){
     int op;
     int opAux;
+    boolean cadastroFinalizado;
 
     goto MENU_PRINCIPAL;
 
@@ -248,6 +246,7 @@ void MENU_USUARIOS(){
         printf("%sMenu inicial >%s %sUsuários%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
         printf("[%s1%s] - Cadastrar\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s2%s] - Pesquisar\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s3%s] - Alterar\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
 
         printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
@@ -258,11 +257,13 @@ void MENU_USUARIOS(){
         switch(op)
         {
             case 1:
-                boolean cadastroFinalizado;
                 CADASTRA_USUARIO(false, &cadastroFinalizado);
                 break;
             case 2:
                 goto FILTROS_USUARIOS;
+                break;
+            case 3:
+                ALTERAR_USUARIO(true);
                 break;
             case 0:
                 return 0;
@@ -529,18 +530,7 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
         }
 
     } while(confirm != 's' && confirm != 'n');
-
-    // arq = fopen(ARQ_LOGIN,"rb");
-    // while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
-    //     printf("\n USUARIO %s",LOGIN.USUARIO);
-    //     printf("\n NOME_COMPLETO %s",LOGIN.NOME_COMPLETO);
-    //     printf("\n SENHA %s",LOGIN.SENHA);
-    //     printf("\n CELULAR %s",LOGIN.CELULAR);
-    //     printf("\n NIVEL %i",LOGIN.NIVEL);
-    //     printf("\n STATUS %i\n\n ",LOGIN.STATUS);
-    // }
-    // fclose(arq);
-
+    
     printf("\n\n");
     system("pause");
     return 0;
@@ -554,6 +544,7 @@ void LISTAR_USUARIOS(int op){
     char buscar[100];
     char tipoPesquisa[100];
     char confirm;
+    int i;
 
     if (op == 1) strcpy(tipoPesquisa,"Nome");
     else if(op == 2) strcpy(tipoPesquisa,"E-mail");
@@ -573,6 +564,9 @@ void LISTAR_USUARIOS(int op){
         while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
 
             if (op == 1) {
+                for (i=0; i < strlen(buscar); i++) {
+                    buscar[i] = toupper(buscar[i]);
+                }
                 if(strcmp(buscar,LOGIN.NOME_COMPLETO) == 0){
                     PRINTAR_USUARIO(&LOGIN);
                     count_usuario++;
@@ -591,18 +585,18 @@ void LISTAR_USUARIOS(int op){
 
         if(count_usuario == 0){
             printf("\n%sAviso!%s\n",COLOR_YELLOW,COLOR_RESET);
-            printf("Nenhum usuário encontrado!\n");
+            printf("Nenhum usuário encontrado!");
+            confirm = 'n';
+        } else {
+            printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+            printf("Deseja alterar o usuário?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+            confirm = tolower(getche());
         }
-
-        printf("\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
-        printf("Deseja alterar o usuário?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
-        confirm = tolower(getche());
-
 
         if(confirm == 's'){
             ALTERAR_USUARIO(0);
         } else {
-            printf("\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+            printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
             printf("Deseja realizar uma nova consulta?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
             confirm = tolower(getche());
         }
@@ -618,16 +612,17 @@ void LISTAR_USUARIOS(int op){
 void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     STRC_LOGIN LOGIN; 
     char buscar[100];
+    int count_usuario;
 
     if(fl_criaCabecalho == 1){  
         CABECALHO();
         printf("%sMenu inicial > Usuários >%s %sAlterar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
     } else {
-        printf("\n\n")
+        printf("\n\n");
     }
 
     printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-    printf("\nDigite o e-mail do usuário que deseja alterar: ");
+    printf("Digite o e-mail do usuário que deseja alterar: ");
     gets(buscar);
 
     arq = fopen(ARQ_LOGIN,"rb");
@@ -642,6 +637,7 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     fclose(arq);
 
     system("pause");
+    
 }
 
 
@@ -651,7 +647,7 @@ void PRINTAR_USUARIO(STRC_LOGIN *USER){
     printf("\n%sEmail:%s %s",COLOR_CYAN,COLOR_RESET,USER->USUARIO);
     printf("\n%sCelular:%s %s",COLOR_CYAN,COLOR_RESET,USER->CELULAR);
     printf("\n%sNível:%s %s",COLOR_CYAN,COLOR_RESET,USER->NIVEL==1?"Comum":"Administrativo");
-    printf("\n%sStatus:%s %s\n\n",COLOR_CYAN,COLOR_RESET,USER->STATUS==1?"Ativo":"Desativo");
+    printf("\n%sStatus:%s %s%s%s\n\n",COLOR_CYAN,COLOR_RESET,USER->STATUS==1?COLOR_GREEN:COLOR_RED,USER->STATUS==1?"Ativo":"Desativo",COLOR_RESET);
     SEPARADOR();
     printf("\n");
 }
