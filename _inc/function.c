@@ -679,52 +679,52 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     system("pause");
     
 }
-// void FORMULARIO_USUARIO(char campo[]){
-//     int i=0;
-//     if (strcmp("NOMECOMPLETO",campo) == 0){
-//         //NOME COMPLETO
-//         int count_espacoBranco, count_numeros;
-//         boolean validaNome = false;
-//         do{
-//             count_espacoBranco = 0, count_numeros = 0;
-//             printf("\n\nDigite o nome completo: ");
-//             gets(LOGIN.NOME_COMPLETO);
-//             if(strlen(LOGIN.NOME_COMPLETO) == 0){
-//                 printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-//                 printf("O nome é obrigatório...\n\n");
-//             } else {
-//                 if(strcmp(LOGIN.NOME_COMPLETO,"0") == 0) return 0;
+void FORMULARIO_USUARIO(char campo[],STRC_LOGIN *LOGIN){
+    int i=0;
+    if (strcmp("NOMECOMPLETO",campo) == 0){
+        //NOME COMPLETO
+        int count_espacoBranco, count_numeros;
+        boolean validaNome = false;
+        do{
+            count_espacoBranco = 0, count_numeros = 0;
+            printf("\n\nDigite o nome completo: ");
+            gets(LOGIN->NOME_COMPLETO);
+            if(strlen(LOGIN->NOME_COMPLETO) == 0){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("O nome é obrigatório...\n\n");
+            } else {
+                if(strcmp(LOGIN->NOME_COMPLETO,"0") == 0) return 0;
 
-//                 for (i=0; i < strlen(LOGIN.NOME_COMPLETO); i++) {
-//                     if(isalpha(LOGIN.NOME_COMPLETO[i]) == 0){
-//                         if(LOGIN.NOME_COMPLETO[i] == ' ') count_espacoBranco++;
-//                         else{
-//                             count_numeros++;
-//                             break;
-//                         }
-//                     } else {
-//                         LOGIN.NOME_COMPLETO[i] = toupper(LOGIN.NOME_COMPLETO[i]);
-//                     }
-//                 }
+                for (i=0; i < strlen(LOGIN->NOME_COMPLETO); i++) {
+                    if(isalpha(LOGIN->NOME_COMPLETO[i]) == 0){
+                        if(LOGIN->NOME_COMPLETO[i] == ' ') count_espacoBranco++;
+                        else{
+                            count_numeros++;
+                            break;
+                        }
+                    } else {
+                        LOGIN->NOME_COMPLETO[i] = toupper(LOGIN->NOME_COMPLETO[i]);
+                    }
+                }
 
-//                 if(isalpha(LOGIN.NOME_COMPLETO[strlen(LOGIN.NOME_COMPLETO)-1]) == 0) count_espacoBranco = 0;
+                if(isalpha(LOGIN->NOME_COMPLETO[strlen(LOGIN->NOME_COMPLETO)-1]) == 0) count_espacoBranco = 0;
 
-//                 if(count_numeros > 0){
-//                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-//                     printf("Nome deve conter somente letras de A-Z...\n\n");
-//                 }else if(count_espacoBranco == 0){
-//                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-//                     printf("Nome inválido, digite o nome completo...\n\n");
-//                 }else{
-//                     validaNome = true;
-//                 }
-//             }
+                if(count_numeros > 0){
+                    printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Nome deve conter somente letras de A-Z...\n\n");
+                }else if(count_espacoBranco == 0){
+                    printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Nome inválido, digite o nome completo...\n\n");
+                }else{
+                    validaNome = true;
+                }
+            }
 
-//         }while(validaNome == false);
-//     } else {
-//         printf("Caiu no else");
-//     }
-// }
+        }while(validaNome == false);
+    } else {
+        printf("Caiu no else");
+    }
+}
 void PRINTAR_USUARIO(STRC_LOGIN *USER){
     printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,USER->NOME_COMPLETO);
     printf("\n%sEmail:%s %s",COLOR_CYAN,COLOR_RESET,USER->USUARIO);
