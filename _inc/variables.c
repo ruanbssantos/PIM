@@ -12,3 +12,4 @@
 
 
 FILE *arq;
+FILE *arqAux;
