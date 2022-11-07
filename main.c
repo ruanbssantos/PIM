@@ -2,7 +2,6 @@
 //INCLUDES
 //=======================================================================================================
 #include "_inc/function.c" //TODAS AS STRUCTS DO SISTEMA
-
 int main(){
 
     int CPAGE_UTF8 = 65001;
@@ -55,9 +54,8 @@ int main(){
             printf("[%s0%s] - Sair",COLOR_YELLOW,COLOR_RESET);
 
             printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-            printf("Escolha uma opção acima: ");
-            scanf("%i",&op);
-            fflush(stdin);
+            printf("Escolha uma opção acima: "); 
+            op = VALIDA_ENTRADA_NUMERO();
 
             switch(op)
             {
@@ -95,13 +93,9 @@ int main(){
                     break;
             }
 
-
-
         }while(op!=0);
     }
 
     SetConsoleOutputCP(CPAGE_DEFAULT);
-
-
     return 0;
 }
