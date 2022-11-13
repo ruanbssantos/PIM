@@ -276,6 +276,43 @@ void MENU_USUARIOS(){
 
     }while(op!=0);
 }
+void MENU_ESPACOS(){
+    int op;
+
+    do{
+        CABECALHO();
+        printf("%sMenu inicial >%s %sEspaços%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        printf("[%s1%s] - Cadastrar\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Pesquisar\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s3%s] - Alterar\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
+
+        printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Escolha uma opção acima: ");
+        op = VALIDA_ENTRADA_NUMERO();
+
+        switch(op)
+        {
+            case 1:
+                CADASTRA_ESPACO();
+                break;
+            case 2:
+                break;
+            case 3:
+                //ALTERAR_USUARIO(true);
+                break;
+            case 0:
+                return 0;
+                break;
+            default:
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                system("pause");
+                break;
+            }
+
+    }while(op!=0);
+}
 //=======================================================================================================
 //SUB-MENUS
 //=======================================================================================================
@@ -415,7 +452,7 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
 
     do{
         CABECALHO();
-        printf("%sColaboradores >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        printf("%sMenu inicial > Colaboradores >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
 
         printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.NOME_COMPLETO);
         printf("\n\n%sEmail:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.USUARIO);
@@ -423,8 +460,10 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
         printf("\n\n%sNível:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.NIVEL==1?"Comum":"Administrativo");
         //printf("\n\n%sSenha:%s %s",COLOR_CYAN,COLOR_RESET,LOGIN.SENHA);
 
-        printf("\n\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
-        confirm = tolower(getche());
+        do{
+            printf("\n\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+            confirm = tolower(getche());
+        } while(confirm != 's' && confirm != 'n');
 
         if(confirm == 's'){
             arq = fopen(ARQ_LOGIN,"a+b");
@@ -496,7 +535,7 @@ void LISTAR_USUARIOS(int op){
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
                 printf("Deseja alterar algum colaborador?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
                 confirm = tolower(getche());
-            } while(confirm != 's' && confirm != 'n');                
+            } while(confirm != 's' && confirm != 'n');
         }
 
         if(confirm == 's'){
@@ -599,7 +638,7 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     fclose(arq);
 
 }
-int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *LOGIN_RETORNO){
+int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
     int i=0;
     STRC_LOGIN LOGIN;
 
@@ -632,17 +671,17 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *LOGIN_RETORNO){
 
                 if(count_numeros > 0){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-                    printf("Nome deve conter somente letras de A-Z...\n\n");
+                    printf("Nome deve conter somente letras de A-Z...\n");
                 }else if(count_espacoBranco == 0){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-                    printf("Nome inválido, digite o nome completo...\n\n");
+                    printf("Nome inválido, digite o nome completo...\n");
                 }else{
                     validaNome = true;
                 }
             }
 
         }while(validaNome == false);
-        strcpy(LOGIN_RETORNO->NOME_COMPLETO,LOGIN.NOME_COMPLETO);
+        strcpy(STRC_RETORNO->NOME_COMPLETO,LOGIN.NOME_COMPLETO);
 
     } else if (strcmp("CELULAR",campo) == 0){
         //CELULAR
@@ -671,7 +710,7 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *LOGIN_RETORNO){
             }
 
         }while(validaCelular == false);
-        strcpy(LOGIN_RETORNO->CELULAR,LOGIN.CELULAR);
+        strcpy(STRC_RETORNO->CELULAR,LOGIN.CELULAR);
 
     } else if(strcmp("EMAIL",campo) == 0){
         //EMAIL
@@ -682,7 +721,7 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *LOGIN_RETORNO){
             if(strcmp(LOGIN.USUARIO,"0") == 0) return 0;
             validaEmail = VALIDA_EMAIL(true,LOGIN.USUARIO);
         }while (validaEmail == false);
-        strcpy(LOGIN_RETORNO->USUARIO,LOGIN.USUARIO);
+        strcpy(STRC_RETORNO->USUARIO,LOGIN.USUARIO);
 
     } else if(strcmp("NIVEL",campo) == 0){
         //NÍVEL
@@ -711,10 +750,10 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *LOGIN_RETORNO){
                     break;
             }
         }while(validaNivel == false);
-        LOGIN_RETORNO->NIVEL = LOGIN.NIVEL;
+        STRC_RETORNO->NIVEL = LOGIN.NIVEL;
 
     } else if(strcmp("STATUS",campo) == 0){
-        //NÍVEL
+        //STATUS
         boolean validaStatus;
         do{
             printf("\nEscolha o status do colaborador:\n");
@@ -744,7 +783,7 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *LOGIN_RETORNO){
                     break;
             }
         }while(validaStatus == false);
-        LOGIN_RETORNO->STATUS = LOGIN.STATUS;
+        STRC_RETORNO->STATUS = LOGIN.STATUS;
     }
     return 1;
 }
@@ -756,4 +795,168 @@ void PRINTAR_USUARIO(STRC_LOGIN *USER){
     printf("\n%sStatus:%s %s%s%s\n\n",COLOR_CYAN,COLOR_RESET,USER->STATUS==1?COLOR_GREEN:COLOR_RED,USER->STATUS==1?"Ativo":"Inativo",COLOR_RESET);
     SEPARADOR();
     printf("\n");
+}
+//=======================================================================================================
+//ESPAÇO
+//=======================================================================================================
+void CADASTRA_ESPACO(){
+    CABECALHO();
+    printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+
+    STRC_ESPACO ESPACO;
+    char confirm;
+
+    printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+    printf("Digite ""%s0%s"" para retornar ao menu anterior...\n",COLOR_YELLOW,COLOR_RESET);
+
+    //NOME COMPLETO
+    if (VALIDA_DADOS_ESPACO("NOME_ESPACO",&ESPACO) == false) return 0;
+
+    //CAPACIDADE
+    if (VALIDA_DADOS_ESPACO("CAPACIDADE",&ESPACO) == false) return 0;
+
+    //TIPO DE ESPACO
+    if (VALIDA_DADOS_ESPACO("TP_ESPACO",&ESPACO) == false) return 0;
+
+    //OBSERVACAO
+    if (VALIDA_DADOS_ESPACO("OBSERVACAO",&ESPACO) == false) return 0;
+
+    //STATUS
+    if (VALIDA_DADOS_ESPACO("STATUS",&ESPACO) == false) return 0;
+
+    do{
+        CABECALHO();
+        printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+
+        printf("\n%sNome do espaço:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO.NOME_ESPACO);
+        printf("\n\n%sCapidade:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO.CAPACIDADE);
+        printf("\n\n%sTipo de espaço:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO.TP_ESPACO);
+        printf("\n\n%sObservação:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO.OBSERVACAO);
+        printf("\n\n%sStatus:%s %s%s%s",COLOR_CYAN,COLOR_RESET,ESPACO.STATUS==1?COLOR_GREEN:COLOR_RED,ESPACO.STATUS==1?"Ativo":"Inativo",COLOR_RESET);
+
+        do{
+            printf("\n\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+            confirm = tolower(getche());
+        } while(confirm != 's' && confirm != 'n');
+
+        if(confirm == 's'){
+            arq = fopen(ARQ_ESPACO,"a+b");
+            fwrite(&ESPACO,sizeof(ESPACO),1,arq);
+            fclose(arq);
+            printf("\n\nEspaço criado com sucesso...");
+        }
+
+    } while(confirm != 's' && confirm != 'n');
+
+    printf("\n\n");
+    system("pause");
+    return 0;
+
+}
+int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
+    STRC_ESPACO ESPACO;
+    boolean valida;
+    int i;
+    if (strcmp("NOME_ESPACO",campo) == 0){
+        //NOME DO ESPAÇO
+        do{
+            valida = false;
+            printf("\n\nDigite o nome do espaço: ");
+            gets(ESPACO.NOME_ESPACO);
+            if(strlen(ESPACO.NOME_ESPACO) == 0){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("O nome do espaço é obrigatório...\n\n");
+            } else if(strlen(ESPACO.NOME_ESPACO) > 90){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Tamanho máximo de 90 caracteres...\n\n");
+            } else {
+                if(strcmp(ESPACO.NOME_ESPACO,"0") == 0) return 0;
+                else{
+                    for (i=0; i < strlen(ESPACO.NOME_ESPACO); i++) {
+                        ESPACO.NOME_ESPACO[i] = toupper(ESPACO.NOME_ESPACO[i]);
+                    }
+                    valida = true;
+                }
+            }
+
+        }while(valida == false);
+        strcpy(STRC_RETORNO->NOME_ESPACO,ESPACO.NOME_ESPACO);
+
+    } else if(strcmp("CAPACIDADE",campo) == 0){
+        //CAPACIDADE
+        printf("\n\nDigite a capacidade total: "); 
+        gets(ESPACO.CAPACIDADE);
+        if(strlen(ESPACO.CAPACIDADE) > 90){
+            printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+            printf("Tamanho máximo de 90 caracteres...\n\n");
+        } else {
+            if(strcmp(ESPACO.CAPACIDADE,"0") == 0) return 0;
+            strcpy(STRC_RETORNO->CAPACIDADE,ESPACO.CAPACIDADE);
+        }
+
+    } else if(strcmp("TP_ESPACO",campo) == 0){
+        //TIPO DE ESPACO
+        do{
+            valida = false;
+            printf("\n\nDigite o tipo de espaço: ");
+            gets(ESPACO.TP_ESPACO);
+            if(strlen(ESPACO.TP_ESPACO) == 0){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("O tipo de espaço é obrigatório...\n\n");
+            } else if(strlen(ESPACO.NOME_ESPACO) > 90){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Tamanho máximo de 90 caracteres...\n\n");
+            } else {
+                if(strcmp(ESPACO.TP_ESPACO,"0") == 0) return 0;
+                else valida = true;
+            }
+
+        }while(valida == false);
+        strcpy(STRC_RETORNO->TP_ESPACO,ESPACO.TP_ESPACO);
+
+    } else if(strcmp("OBSERVACAO",campo) == 0){
+        //OBSERVACAO
+        printf("\n\nDigite a observação: ");
+        gets(ESPACO.OBSERVACAO);
+        if(strlen(ESPACO.OBSERVACAO) > 90){
+            printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+            printf("Tamanho máximo de 90 caracteres...\n\n");
+        } else {
+            if(strcmp(ESPACO.OBSERVACAO,"0") == 0) return 0;
+            strcpy(STRC_RETORNO->OBSERVACAO,ESPACO.OBSERVACAO);
+        }
+
+    } else if(strcmp("STATUS",campo) == 0){
+        //STATUS
+        do{
+            valida = false;
+            printf("\nEscolha o status do espaço:\n");
+            printf("[%s1%s] - Ativo\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s2%s] - Inativo\n",COLOR_YELLOW,COLOR_RESET);
+
+            printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Escolha uma opção acima: ");
+            ESPACO.STATUS = VALIDA_ENTRADA_NUMERO();
+
+            switch(ESPACO.STATUS)
+            {
+                case 1:
+                    valida = true;
+                    break;
+                case 2:
+                    ESPACO.STATUS = 0;
+                    valida = true;
+                    break;
+                case 0:
+                    return 0;
+                default:
+                    printf("\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                    system("pause");
+                    break;
+            }
+        }while(valida == false);
+        STRC_RETORNO->STATUS = ESPACO.STATUS;
+    }
+    return 1;
 }

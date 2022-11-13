@@ -9,6 +9,7 @@
 
 //VARIAVEIS DE ARQUIVOS
 #define ARQ_LOGIN "ARQUIVOS/Login.bin"
+#define ARQ_ESPACO "ARQUIVOS/Espaco.bin"
 
 
 FILE *arq;

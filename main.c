@@ -47,7 +47,7 @@ int main(){
             CABECALHO();
 
             printf("[%s1%s] - Colaboradores\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s2%s] - Salas\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s2%s] - Espaços\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s4%s] - Relatórios\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s5%s] - Alterar senha\n",COLOR_YELLOW,COLOR_RESET);
@@ -63,8 +63,7 @@ int main(){
                     MENU_USUARIOS();
                     break;
                 case 2:
-                    printf("Em CONSTRUÇÃO...");
-                    system("pause >nul");
+                    MENU_ESPACOS();
                     break;
                 case 3:
                     printf("Em CONSTRUÇÃO...");

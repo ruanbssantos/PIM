@@ -9,7 +9,8 @@
         "windows.h": "c",
         "stdlib.h": "c",
         "string.h": "c",
-        "ctype.h": "c"
+        "ctype.h": "c",
+        "PIM copy.C": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

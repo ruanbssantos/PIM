@@ -26,9 +26,21 @@ typedef struct {
 typedef struct {
     char USUARIO[100];
     char NOME_COMPLETO[100];
-    char SENHA[100]; 
+    char SENHA[100];
     char CELULAR[15];
-    int NIVEL;    
+    int NIVEL;
     int STATUS;
 
 }STRC_LOGIN;
+
+typedef struct {
+    int ID;
+    char NOME_ESPACO[100];
+    char CAPACIDADE[100];
+    char TP_ESPACO[100];
+    char OBSERVACAO[100];
+    int STATUS;
+    int LIMITE_TEMPO;
+
+}STRC_ESPACO;
+
