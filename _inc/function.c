@@ -1,4 +1,4 @@
-
+﻿
 #include "struct.c" //TODAS AS STRUCTS DO SISTEMA3
 #include "variables.c" //TODAS AS STRUCTS DO SISTEMA3
 
@@ -119,6 +119,30 @@ void SEPARADOR(){
     }
     printf("╼");
 }
+void BUSCAR_ID(char BANCO[],int *RETORNO){
+
+    int ID;
+
+    arq = fopen(BANCO,"rb");
+
+    if(arq==NULL){
+        *RETORNO = 1;
+    } else {
+
+        if (strcmp(ARQ_ESPACO,BANCO) == 0){
+            STRC_ESPACO STRC_DEFAULT;
+            while(fread(&STRC_DEFAULT, sizeof(STRC_DEFAULT), 1, arq)==1) {
+                ID = STRC_DEFAULT.ID;
+                ID++;
+            }
+        }
+
+        *RETORNO = ID;
+    }
+
+    fclose(arq);
+
+}
 //=======================================================================================================
 //FUNCTIONS VALIDAÇÃO
 //=======================================================================================================
@@ -233,7 +257,6 @@ int  VALIDA_ENTRADA_NUMERO(){
     }
     return atoi(op);
 }
-
 //=======================================================================================================
 //MENUS
 //=======================================================================================================
@@ -297,6 +320,7 @@ void MENU_ESPACOS(){
                 CADASTRA_ESPACO();
                 break;
             case 2:
+                SUB_MENU_ESPACOS();
                 break;
             case 3:
                 //ALTERAR_USUARIO(true);
@@ -337,6 +361,37 @@ void SUB_MENU_USUARIOS(){
                 break;
             case 0:
                 MENU_USUARIOS();
+                break;
+            default:
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                system("pause");
+                break;
+        }
+
+    }while(op!=0);
+}
+void SUB_MENU_ESPACOS(){
+    int op;
+    do{
+        CABECALHO();
+        printf("%sMenu inicial > Espaços >%s %sPesquisar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        printf("[%s1%s] - Nome\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Tipo\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s3%s] - Todos\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
+
+        printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Escolha o filtro desejado: ");
+        op = VALIDA_ENTRADA_NUMERO();
+
+        switch(op)
+        {
+            case 1: case 2: case 3:
+                LISTAR_ESPACO(op);
+                break;
+            case 0:
+                MENU_ESPACOS();
                 break;
             default:
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
@@ -502,6 +557,7 @@ void LISTAR_USUARIOS(int op){
         if(op != 3){
             printf("\nDigite o %s: ", op==1?"nome":"e-mail");
             gets(buscar);
+            if(strcmp(buscar,"0") == 0) return 0;
         }
 
         while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
@@ -800,6 +856,7 @@ void PRINTAR_USUARIO(STRC_LOGIN *USER){
 //ESPAÇO
 //=======================================================================================================
 void CADASTRA_ESPACO(){
+
     CABECALHO();
     printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
 
@@ -840,6 +897,7 @@ void CADASTRA_ESPACO(){
         } while(confirm != 's' && confirm != 'n');
 
         if(confirm == 's'){
+            BUSCAR_ID(ARQ_ESPACO,&ESPACO.ID);
             arq = fopen(ARQ_ESPACO,"a+b");
             fwrite(&ESPACO,sizeof(ESPACO),1,arq);
             fclose(arq);
@@ -852,6 +910,77 @@ void CADASTRA_ESPACO(){
     system("pause");
     return 0;
 
+}
+void LISTAR_ESPACO(int op){
+
+    STRC_ESPACO ESPACO;
+    int count = 0, i; 
+    char tipoPesquisa[100],confirm,buscar[100]; 
+
+    if (op == 1) strcpy(tipoPesquisa,"Nome");
+    else if(op == 2) strcpy(tipoPesquisa,"Tipo");
+    else strcpy(tipoPesquisa,"Todos");
+
+    do{
+        count = 0;
+        CABECALHO();
+        printf("%sMenu inicial > Espaços >%s %sPesquisar - %s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipoPesquisa,COLOR_RESET);
+        arq = fopen(ARQ_ESPACO,"rb");
+
+
+        if(op != 3){
+            printf("\nDigite o %s: ", op==1?"nome":"tipo");
+            gets(buscar);
+            if(strcmp(buscar,"0") == 0) return 0;
+            for (i=0; i < strlen(buscar); i++) {
+                buscar[i] = toupper(buscar[i]);
+            }
+        }
+
+        while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){
+
+            if (op == 1 ) {   
+               if(strcmp(buscar,ESPACO.NOME_ESPACO) == 0){
+                   PRINTAR_ESPACO(&ESPACO);
+                   count++;
+               }
+            } else if (op == 2){
+               if(strcmp(buscar,ESPACO.TP_ESPACO) == 0){
+                   PRINTAR_ESPACO(&ESPACO);
+                   count++;
+               }
+            } else {
+               PRINTAR_ESPACO(&ESPACO);
+               count++;
+            }
+        }
+        fclose(arq);
+
+        if(count == 0){
+            printf("\n%sAviso!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Nenhum espaço encontrado!");
+            confirm = 'n';
+        } else {
+            do{
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Deseja alterar algum espaço?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+                confirm = tolower(getche());
+            } while(confirm != 's' && confirm != 'n');
+        }
+
+        if(confirm == 's'){
+            //ALTERAR_USUARIO(0);
+        } else {
+            do{
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Deseja realizar uma nova consulta?  %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+                confirm = tolower(getche());
+            } while(confirm != 's' && confirm != 'n');
+        }
+
+    } while(confirm == 's');
+
+    return 0;
 }
 int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
     STRC_ESPACO ESPACO;
@@ -884,7 +1013,7 @@ int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
 
     } else if(strcmp("CAPACIDADE",campo) == 0){
         //CAPACIDADE
-        printf("\n\nDigite a capacidade total: "); 
+        printf("\n\nDigite a capacidade total: ");
         gets(ESPACO.CAPACIDADE);
         if(strlen(ESPACO.CAPACIDADE) > 90){
             printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
@@ -908,7 +1037,12 @@ int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
                 printf("Tamanho máximo de 90 caracteres...\n\n");
             } else {
                 if(strcmp(ESPACO.TP_ESPACO,"0") == 0) return 0;
-                else valida = true;
+                else{
+                    for (i=0; i < strlen(ESPACO.TP_ESPACO); i++) {
+                        ESPACO.TP_ESPACO[i] = toupper(ESPACO.TP_ESPACO[i]);
+                    }
+                    valida = true;
+                }
             }
 
         }while(valida == false);
@@ -959,4 +1093,14 @@ int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
         STRC_RETORNO->STATUS = ESPACO.STATUS;
     }
     return 1;
+}
+void PRINTAR_ESPACO(STRC_ESPACO *ESPACO){
+    printf("\n%sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,ESPACO->ID);
+    printf("\n%sNome do espaço:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO->NOME_ESPACO);
+    printf("\n%sCapacidade:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO->CAPACIDADE);
+    printf("\n%sTipo de espaço:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO->TP_ESPACO);
+    printf("\n%sObservação:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO->OBSERVACAO);
+    printf("\n%sStatus:%s %s%s%s\n\n",COLOR_CYAN,COLOR_RESET,ESPACO->STATUS==1?COLOR_GREEN:COLOR_RED,ESPACO->STATUS==1?"Ativo":"Inativo",COLOR_RESET);
+    SEPARADOR();
+    printf("\n");
 }
