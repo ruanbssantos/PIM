@@ -914,8 +914,8 @@ void CADASTRA_ESPACO(){
 void LISTAR_ESPACO(int op){
 
     STRC_ESPACO ESPACO;
-    int count = 0, i; 
-    char tipoPesquisa[100],confirm,buscar[100]; 
+    int count = 0, i;
+    char tipoPesquisa[100],confirm,buscar[100];
 
     if (op == 1) strcpy(tipoPesquisa,"Nome");
     else if(op == 2) strcpy(tipoPesquisa,"Tipo");
@@ -939,7 +939,7 @@ void LISTAR_ESPACO(int op){
 
         while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){
 
-            if (op == 1 ) {   
+            if (op == 1 ) {
                if(strcmp(buscar,ESPACO.NOME_ESPACO) == 0){
                    PRINTAR_ESPACO(&ESPACO);
                    count++;
@@ -969,7 +969,7 @@ void LISTAR_ESPACO(int op){
         }
 
         if(confirm == 's'){
-            //ALTERAR_USUARIO(0);
+            ALTERAR_ESPACO(0);
         } else {
             do{
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
@@ -982,9 +982,99 @@ void LISTAR_ESPACO(int op){
 
     return 0;
 }
+void ALTERAR_ESPACO(boolean fl_criaCabecalho){
+    STRC_ESPACO ESPACO;
+    char buscar[100], STR_ID[100];
+    int i,count,op,posicaoArq = 0;
+    boolean validaAlteracao;
+
+    if(fl_criaCabecalho == 1){
+        CABECALHO();
+        printf("%sMenu inicial > Espaços >%s %sAlterar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+    } else {
+        printf("\n\n");
+    }
+
+    printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+    printf("Digite o código ou nome do espaço: ");
+    gets(buscar);
+    for (i=0; i < strlen(buscar); i++) {
+        buscar[i] = toupper(buscar[i]);
+    }
+    
+    arq = fopen(ARQ_ESPACO,"rb");
+
+    while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){ 
+        sprintf(STR_ID,"%d",ESPACO.ID); 
+        if(strcmp(buscar,STR_ID) == 0 || strcmp(buscar,ESPACO.NOME_ESPACO) == 0){
+            fclose(arq);
+            count++;
+            do{
+                validaAlteracao = false;
+                CABECALHO();
+                printf("%sMenu inicial > Colaboradores >%s %sAlterar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+                printf("\n[%s1%s] - %sNome:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,ESPACO.NOME_ESPACO);
+                printf("\n[%s2%s] - %sCapacidade:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,ESPACO.CAPACIDADE);
+                printf("\n[%s3%s] - %sTipo:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,ESPACO.TP_ESPACO);
+                printf("\n[%s4%s] - %sObservacao:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,ESPACO.OBSERVACAO);
+                printf("\n[%s5%s] - %sStatus:%s %s%s%s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,ESPACO.STATUS==1?COLOR_GREEN:COLOR_RED,ESPACO.STATUS==1?"Ativo":"Inativo",COLOR_RESET);
+                printf("\n[%s0%s] - %sVoltar%s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET);
+
+                printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                printf("Escolha o filtro desejado: ");
+                op = VALIDA_ENTRADA_NUMERO();
+
+                switch(op)
+                {
+                    case 1:
+                        //VALIDA NOME
+                        if (VALIDA_DADOS_ESPACO("NOME_ESPACO",&ESPACO) == true) validaAlteracao = true;
+                        break;
+                    case 2:
+                        //VALIDA CAPACIDADE
+                        if (VALIDA_DADOS_ESPACO("CAPACIDADE",&ESPACO) == true) validaAlteracao = true;
+                        break;
+                    case 3:
+                        //VALIDA TIPO
+                        if (VALIDA_DADOS_ESPACO("TP_ESPACO",&ESPACO) == true) validaAlteracao = true;
+                        break;
+                    case 4:
+                        //VALIDA OBSERVACAO
+                        if (VALIDA_DADOS_ESPACO("OBSERVACAO",&ESPACO) == true) validaAlteracao = true;
+                        break;
+                    case 5:
+                        //VALIDA STATUS
+                        if (VALIDA_DADOS_ESPACO("STATUS",&ESPACO) == true) validaAlteracao = true;
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                        printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                        system("pause");
+                        break;
+                }
+
+                //ALTERA QUANDO LIBERADO
+                if (validaAlteracao == true){
+                    arq = fopen(ARQ_ESPACO,"r+b");
+                    fseek(arq, posicaoArq, SEEK_SET);  //DEFINE O DESLOCAMENTO PARA ONDE ENCONTROU OS DADOS;
+                    fwrite(&ESPACO,sizeof(STRC_ESPACO),1,arq) == sizeof(STRC_ESPACO); //REESCREVE OS DADOS  NO ARQUIVO;
+                    fclose(arq);
+                }
+
+            }while(op!=0);
+        }
+        posicaoArq = posicaoArq + sizeof(STRC_ESPACO);
+        fseek(arq, posicaoArq, SEEK_SET);
+    }
+
+    fclose(arq);
+
+}
 int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
     STRC_ESPACO ESPACO;
-    boolean valida;
+    boolean valida, validaAux;
     int i;
     if (strcmp("NOME_ESPACO",campo) == 0){
         //NOME DO ESPAÇO
@@ -1004,7 +1094,25 @@ int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
                     for (i=0; i < strlen(ESPACO.NOME_ESPACO); i++) {
                         ESPACO.NOME_ESPACO[i] = toupper(ESPACO.NOME_ESPACO[i]);
                     }
-                    valida = true;
+
+                    validaAux = true;
+
+                    STRC_ESPACO ESPACO_BUSCA;
+                    arq = fopen(ARQ_ESPACO,"rb");
+                    if(arq  != NULL) {
+                        while(fread(&ESPACO_BUSCA, sizeof(ESPACO_BUSCA), 1, arq)){
+                            if (strcmp(ESPACO.NOME_ESPACO,ESPACO_BUSCA.NOME_ESPACO) == 0 ){ 
+                                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                                printf("Nome já cadastrado na base de dados...\n\n");
+                                validaAux = false;
+                                break;
+                            }
+
+                        }
+                    }
+                    fclose(arq);
+
+                    if (validaAux == true) valida = true;
                 }
             }
 
