@@ -14,6 +14,7 @@ int main(){
 
     boolean session = true;
     int session_nivelAcesso = 2;
+    session_usuarioID = 1;
 
     arq = fopen(ARQ_LOGIN,"rb");
 
@@ -46,6 +47,7 @@ int main(){
         do{
             CABECALHO();
 
+            //printf("%sCódigo usuário:%s %d\n\n",COLOR_YELLOW,COLOR_RESET,session_usuarioID);
             printf("[%s1%s] - Colaboradores\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s2%s] - Espaços\n",COLOR_YELLOW,COLOR_RESET);
             printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);

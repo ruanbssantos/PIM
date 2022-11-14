@@ -135,6 +135,14 @@ void BUSCAR_ID(char BANCO[],int *RETORNO){
                 ID = STRC_DEFAULT.ID;
                 ID++;
             }
+        } else if (strcmp(ARQ_LOGIN,BANCO) == 0){
+            if (strcmp(ARQ_LOGIN,BANCO) == 0){
+                STRC_LOGIN STRC_DEFAULT;
+                while(fread(&STRC_DEFAULT, sizeof(STRC_DEFAULT), 1, arq)==1) {
+                    ID = STRC_DEFAULT.ID;
+                    ID++;
+                }
+            }
         }
 
         *RETORNO = ID;
@@ -186,6 +194,7 @@ void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
             //    alt_senha_padrao();
             //    break;
             //}
+            session_usuarioID = LOGIN.ID;
             *session_nivelAcesso = LOGIN.NIVEL;
             *session = true;
             break;
@@ -321,6 +330,45 @@ void MENU_ESPACOS(){
                 break;
             case 2:
                 SUB_MENU_ESPACOS();
+                break;
+            case 3:
+                //ALTERAR_USUARIO(true);
+                break;
+            case 0:
+                return 0;
+                break;
+            default:
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                system("pause");
+                break;
+            }
+
+    }while(op!=0);
+}
+void MENU_AGENDAMENTOS(){
+    int op;
+
+    do{
+        CABECALHO();
+        printf("%sMenu inicial >%s %sAgendamentos%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        printf("[%s1%s] - Solicitar\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Check-in\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s3%s] - Check-out\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s3%s] - Cancelamento\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
+
+        printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Escolha uma opção acima: ");
+        op = VALIDA_ENTRADA_NUMERO();
+
+        switch(op)
+        {
+            case 1:
+                //CADASTRA_AGENDAMENTO();
+                break;
+            case 2:
+                //SUB_MENU_ESPACOS();
                 break;
             case 3:
                 //ALTERAR_USUARIO(true);
@@ -521,6 +569,7 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
         } while(confirm != 's' && confirm != 'n');
 
         if(confirm == 's'){
+            BUSCAR_ID(ARQ_LOGIN,&LOGIN.ID);
             arq = fopen(ARQ_LOGIN,"a+b");
             fwrite(&LOGIN,sizeof(LOGIN),1,arq);
             fclose(arq);
@@ -709,6 +758,9 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
             if(strlen(LOGIN.NOME_COMPLETO) == 0){
                 printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                 printf("O nome é obrigatório...\n\n");
+            } else if(strlen(LOGIN.NOME_COMPLETO) > 90){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Tamanho máximo de 90 caracteres...\n\n");
             } else {
                 if(strcmp(LOGIN.NOME_COMPLETO,"0") == 0) return 0;
                 for (i=0; i < strlen(LOGIN.NOME_COMPLETO); i++) {
@@ -747,7 +799,11 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
             validaCelular = true;
             printf("\nDigite o celular com DDD (somente números): ");
             gets(LOGIN.CELULAR);
-            if(strlen(LOGIN.CELULAR) > 0){
+            
+            if(strlen(LOGIN.CELULAR) > 90){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Tamanho máximo de 90 caracteres...\n\n");
+            }else if(strlen(LOGIN.CELULAR) > 0){
                 if(strcmp(LOGIN.CELULAR,"0") == 0) return 0;
                 if(strlen(LOGIN.CELULAR) < 11 || strlen(LOGIN.CELULAR) > 11){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
@@ -774,8 +830,13 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
         do{
             printf("\nDigite o email: ");
             gets(LOGIN.USUARIO);
-            if(strcmp(LOGIN.USUARIO,"0") == 0) return 0;
-            validaEmail = VALIDA_EMAIL(true,LOGIN.USUARIO);
+            if(strlen(LOGIN.USUARIO) > 90){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Tamanho máximo de 90 caracteres...\n\n");
+            } else {
+                if(strcmp(LOGIN.USUARIO,"0") == 0) return 0;
+                validaEmail = VALIDA_EMAIL(true,LOGIN.USUARIO);
+            }
         }while (validaEmail == false);
         strcpy(STRC_RETORNO->USUARIO,LOGIN.USUARIO);
 
@@ -844,6 +905,7 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
     return 1;
 }
 void PRINTAR_USUARIO(STRC_LOGIN *USER){
+    printf("\n%sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,USER->ID);
     printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,USER->NOME_COMPLETO);
     printf("\n%sEmail:%s %s",COLOR_CYAN,COLOR_RESET,USER->USUARIO);
     printf("\n%sCelular:%s %s",COLOR_CYAN,COLOR_RESET,USER->CELULAR);
@@ -1212,3 +1274,6 @@ void PRINTAR_ESPACO(STRC_ESPACO *ESPACO){
     SEPARADOR();
     printf("\n");
 }
+//=======================================================================================================
+//ESPAÇO
+//=======================================================================================================

@@ -24,6 +24,7 @@ typedef struct {
 }STRC_DH;
 
 typedef struct {
+    int ID;
     char USUARIO[100];
     char NOME_COMPLETO[100];
     char SENHA[100];
@@ -44,3 +45,20 @@ typedef struct {
 
 }STRC_ESPACO;
 
+typedef struct {
+    int ID;
+    int ESPACO_ID;
+    char DT_INICIO[11];
+    char DH_INICIO[6];
+    char DT_FINAL[11];
+    char DH_FINAL[6];
+    int DIA_SEMANAS;
+    char ASSUNTO[100];
+    int USUARIO_ID[100];
+    int STATUS;
+    int LIMITE_TEMPO;
+    
+    STRC_LOGIN USUARIO;
+    STRC_ESPACO ESPACO;
+
+}STRC_AGENDAMENTO;
