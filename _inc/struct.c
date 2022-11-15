@@ -1,4 +1,4 @@
-﻿//=======================================================================================================
+//=======================================================================================================
 //INCLUDES
 //=======================================================================================================
 #include <stdio.h>
@@ -7,8 +7,8 @@
 #include <locale.h> //CARACTER ESPECIAL DO PORTUGUES
 #include <windows.h> //USAR COMANDOS DO WINDOWS
 #include <time.h> //PEGAR DATA E HORA DO SISTEMA
-#include <ctype.h> //CONTÃM FUNÃÃES DO TIPO BOOLEANN COMO ISDIGIT
-#include <stdbool.h> //LÃ BOOLEANO
+#include <ctype.h> //CONTÉM FUNÇÕES DO TIPO BOOLEANN COMO ISDIGIT
+#include <stdbool.h> //LÊ BOOLEANO
 #include <conio.h>
 
 typedef struct {
@@ -48,15 +48,21 @@ typedef struct {
 typedef struct {
     int ID;
     int ESPACO_ID;
-    char DT_INICIO[11];
-    char DH_INICIO[6];
-    char DT_FINAL[11];
-    char DH_FINAL[6];
+    int DAY_INICIO;
+    int MONTH_INICIO;
+    int YEAR_INICIO;
+    int DAY_FIM;
+    int MONTH_FIM;
+    int YEAR_FIM;
     int DIA_SEMANAS;
     char ASSUNTO[100];
     int USUARIO_ID[100];
     int STATUS;
     int LIMITE_TEMPO;
+    long DH_INICIO;
+    long DH_FINAL;
+    int AVALIACAO;
+    char FEEDBACK[100];
     
     STRC_LOGIN USUARIO;
     STRC_ESPACO ESPACO;

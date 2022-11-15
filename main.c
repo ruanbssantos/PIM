@@ -1,4 +1,4 @@
-﻿//=======================================================================================================
+//=======================================================================================================
 //INCLUDES
 //=======================================================================================================
 #include "_inc/function.c" //TODAS AS STRUCTS DO SISTEMA
@@ -43,58 +43,8 @@ int main(){
     // }while (session == 0);
 
     if (session_nivelAcesso == 2){
-        int op;
-        do{
-            CABECALHO();
-
-            //printf("%sCódigo usuário:%s %d\n\n",COLOR_YELLOW,COLOR_RESET,session_usuarioID);
-            printf("[%s1%s] - Colaboradores\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s2%s] - Espaços\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s4%s] - Relatórios\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s5%s] - Alterar senha\n",COLOR_YELLOW,COLOR_RESET);
-            printf("[%s0%s] - Sair",COLOR_YELLOW,COLOR_RESET);
-
-            printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-            printf("Escolha uma opção acima: "); 
-            op = VALIDA_ENTRADA_NUMERO();
-
-            switch(op)
-            {
-                case 1:
-                    MENU_USUARIOS();
-                    break;
-                case 2:
-                    MENU_ESPACOS();
-                    break;
-                case 3:
-                    printf("Em CONSTRUÇÃO...");
-                    system("pause >nul");
-                    break;
-                case 4:
-                    printf("Em CONSTRUÇÃO...");
-                    system("pause >nul");
-                    break;
-                case 5:
-                    printf("Em CONSTRUÇÃO...");
-                    system("pause >nul");
-                    break;
-                case 6:
-                    printf("Em CONSTRUÇÃO...");
-                    system("pause >nul");
-                    break;
-                case 0:
-                    printf("\n\nObrigado pela visita, até mais...\n");
-                    exit(1);
-                    break;
-                default:
-                    printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
-                    printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
-                    system("pause");
-                    break;
-            }
-
-        }while(op!=0);
+        //MENU_PRINCIPAL_ADM();
+        CADASTRA_AGENDAMENTO();
     }
 
     SetConsoleOutputCP(CPAGE_DEFAULT);

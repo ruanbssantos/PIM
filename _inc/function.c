@@ -1,4 +1,4 @@
-﻿
+
 #include "struct.c" //TODAS AS STRUCTS DO SISTEMA3
 #include "variables.c" //TODAS AS STRUCTS DO SISTEMA3
 
@@ -119,6 +119,7 @@ void SEPARADOR(){
     }
     printf("╼");
 }
+//BUSCA ULTIMO ID;
 void BUSCAR_ID(char BANCO[],int *RETORNO){
 
     int ID;
@@ -136,12 +137,10 @@ void BUSCAR_ID(char BANCO[],int *RETORNO){
                 ID++;
             }
         } else if (strcmp(ARQ_LOGIN,BANCO) == 0){
-            if (strcmp(ARQ_LOGIN,BANCO) == 0){
-                STRC_LOGIN STRC_DEFAULT;
-                while(fread(&STRC_DEFAULT, sizeof(STRC_DEFAULT), 1, arq)==1) {
-                    ID = STRC_DEFAULT.ID;
-                    ID++;
-                }
+            STRC_LOGIN STRC_DEFAULT;
+            while(fread(&STRC_DEFAULT, sizeof(STRC_DEFAULT), 1, arq)==1) {
+                ID = STRC_DEFAULT.ID;
+                ID++;
             }
         }
 
@@ -151,6 +150,61 @@ void BUSCAR_ID(char BANCO[],int *RETORNO){
     fclose(arq);
 
 }
+//FUNCAO PAARA SAIR DO SISTEMA;
+void EXIT(){
+    printf("\n\nObrigado pela visita, até mais...\n");
+    exit(1);
+}
+//MSG DE RETORNO
+void MSG_RETORNO(){
+    printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+    printf("Para retornar ao menu anterior, digite ""%s0%s"" a qualquer momento...\n",COLOR_YELLOW,COLOR_RESET);
+}
+//FORMATA DATA PARA BR
+void FORMATA_DATA(int d, int m, int y){
+    char day[100],month[100],year[100],resultado[100];
+
+    if (d) sprintf(day, "%02d", d);
+    if (m) sprintf(month, "%02d", m);
+    if (y) sprintf(year, "%04d", y);
+
+    // strcpy(resultado,day);
+    // strcat(resultado,"/");
+    // strcat(resultado,month);
+    // strcat(resultado,"/");
+    // strcat(resultado,year);
+
+    printf("%s/%s/%s",day,month,year);
+}
+//PREPARA ENTRADA USUÁRIO
+void PREPARA_ENTRADA_DATA(char buscar[],int *dt){
+    char *SPLIT;
+    int i;
+
+    SPLIT = strtok(buscar, "/");
+    i = 0;
+    while (SPLIT != NULL) {
+        if ((i == 0 && strlen(SPLIT) == 2) || (i == 1 && strlen(SPLIT) == 2) || (i == 2 && strlen(SPLIT) == 4)){
+            dt[i] = atoi(SPLIT);
+        } else {
+            dt[i] = 0;
+        }
+        i++;
+        SPLIT = strtok(NULL, "/");
+    }
+
+}
+//PREPARA DH STRUCT LONG
+// long PREPARA_DATA_STRC(int day, int month, int year, int hour, int min){
+  
+//     char str_day[100],str_month[100],str_year[100],str_hour[100],str_min[100],resultado[100];
+
+//     if (day) sprintf(day, "%02d", d);
+//     if (month) sprintf(month, "%02d", m);
+//     if (year) sprintf(year, "%04d", y);
+
+// }
+
 //=======================================================================================================
 //FUNCTIONS VALIDAÇÃO
 //=======================================================================================================
@@ -204,7 +258,7 @@ void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
     fclose(arq);
 
 }
-int  VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
+int VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
 
     int count_arroba = 0, count_espacoBranco = 0, count_pontos = 0, conta_pontos_fl = 0, ultimoDigito;
 
@@ -254,7 +308,7 @@ int  VALIDA_EMAIL(boolean *emailValidado_fl, char email[]){
 
     return emailValidado_fl;
 }
-int  VALIDA_ENTRADA_NUMERO(){
+int VALIDA_ENTRADA_NUMERO(){
     char op[100];
     scanf("%s",op);
     fflush(stdin);
@@ -266,9 +320,97 @@ int  VALIDA_ENTRADA_NUMERO(){
     }
     return atoi(op);
 }
+int VALIDA_ENTRADA_DATA(int d, int m, int y){
+    //VALIDA ANO
+    if (y >= 1800 && y <= 2999) {
+        //VALIDA MES
+        if (m >= 1 && m <= 12) {
+            //VALIDA DIA
+            if (d >= 1 && d <= 31) {
+                if ((d >= 1 && d <= 30) && (m == 4 || m == 6 || m == 9 || m == 11))
+                    return 1; //VALIDA DIA QUANDO OS MESES FOR (ABRIL/JUNHO/SETEMBRO/NOVEMBRO) = 30 DIAS
+                else if ((d >= 1 && d <= 31) && (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12))
+                    return 1; //VALIDA DIA QUANDO OS MESES FOR (JANEIRO/MARÇO/MAIO/JULHO/AGOSTO/OUTUBRO/DEZEMBRO) = 31 DIAS
+                else if ((d >= 1 && d <= 28) && (m == 2))
+                    return 1; //VALIDA DIA QUANDO O MES FOR FEVEREIRO E O ANO NÃO FOR BISSEXTO
+                else if (d == 29 && m == 2 &&  ((y % 4 == 0 && y % 100 != 0) || (y % 4 == 0 && y % 100 == 0 && y % 400 == 0)))
+                    return 1; //VALIDA DIA QUANDO O MES FOR FEVEREIRO E O ANO FOR BISSEXTO (REGRA: MICROSOFT > https://learn.microsoft.com/pt-br/office/troubleshoot/excel/determine-a-leap-year)
+                else
+                    printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Data digitada inválida...\n\n");
+                    return 0;
+            } else {
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Dia digitado inválido...\n\n");
+                return 0;
+            }
+        } else {
+            printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+            printf("Mês digitado inválido...\n\n");
+            return 0;
+        }
+    } else {
+        printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+        printf("Ano digitado inválido...\n\n");
+        return 0;
+    }
+}
 //=======================================================================================================
 //MENUS
 //=======================================================================================================
+void MENU_PRINCIPAL_ADM(){
+    int op;
+    do{
+        CABECALHO();
+        printf("%sMenu inicial%s\n\n",COLOR_GREEN,COLOR_RESET);
+        printf("[%s1%s] - Colaboradores\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Espaços\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s4%s] - Relatórios\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s5%s] - Alterar senha\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s0%s] - Sair",COLOR_YELLOW,COLOR_RESET);
+
+        printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Escolha uma opção acima: ");
+        op = VALIDA_ENTRADA_NUMERO();
+
+        switch(op)
+        {
+            case 1:
+                MENU_USUARIOS();
+                break;
+            case 2:
+                MENU_ESPACOS();
+                break;
+            case 3:
+                MENU_AGENDAMENTOS();
+                break;
+            case 4:
+                printf("Em CONSTRUÇÃO...");
+                system("pause >nul");
+                break;
+            case 5:
+                printf("Em CONSTRUÇÃO...");
+                system("pause >nul");
+                break;
+            case 6:
+                printf("Em CONSTRUÇÃO...");
+                system("pause >nul");
+                break;
+            case 0:
+                EXIT();
+                break;
+            default:
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                system("pause");
+                break;
+        }
+
+    }while(op!=0);
+
+    return;
+}
 void MENU_USUARIOS(){
     int op;
     boolean cadastroFinalizado;
@@ -297,7 +439,7 @@ void MENU_USUARIOS(){
                 ALTERAR_USUARIO(true);
                 break;
             case 0:
-                return 0;
+                MENU_PRINCIPAL_ADM();
                 break;
             default:
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
@@ -307,6 +449,8 @@ void MENU_USUARIOS(){
             }
 
     }while(op!=0);
+
+    return;
 }
 void MENU_ESPACOS(){
     int op;
@@ -332,19 +476,20 @@ void MENU_ESPACOS(){
                 SUB_MENU_ESPACOS();
                 break;
             case 3:
-                //ALTERAR_USUARIO(true);
+                ALTERAR_ESPACO(true);
                 break;
             case 0:
-                return 0;
+                MENU_PRINCIPAL_ADM();
                 break;
             default:
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
                 printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
                 system("pause");
                 break;
-            }
+        }
 
     }while(op!=0);
+    return;
 }
 void MENU_AGENDAMENTOS(){
     int op;
@@ -365,7 +510,7 @@ void MENU_AGENDAMENTOS(){
         switch(op)
         {
             case 1:
-                //CADASTRA_AGENDAMENTO();
+                CADASTRA_AGENDAMENTO();
                 break;
             case 2:
                 //SUB_MENU_ESPACOS();
@@ -374,7 +519,7 @@ void MENU_AGENDAMENTOS(){
                 //ALTERAR_USUARIO(true);
                 break;
             case 0:
-                return 0;
+                MENU_PRINCIPAL_ADM();
                 break;
             default:
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
@@ -384,6 +529,8 @@ void MENU_AGENDAMENTOS(){
             }
 
     }while(op!=0);
+
+    return;
 }
 //=======================================================================================================
 //SUB-MENUS
@@ -418,6 +565,7 @@ void SUB_MENU_USUARIOS(){
         }
 
     }while(op!=0);
+    return 0;
 }
 void SUB_MENU_ESPACOS(){
     int op;
@@ -449,6 +597,7 @@ void SUB_MENU_ESPACOS(){
         }
 
     }while(op!=0);
+    return 0;
 }
 //=======================================================================================================
 //COLABORADORES
@@ -470,8 +619,7 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
         system("pause");
         printf("\n");
     } else {
-        printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-        printf("Digite ""%s0%s"" para retornar ao menu anterior...\n",COLOR_YELLOW,COLOR_RESET);
+        MSG_RETORNO();
     }
 
     //EMAIL
@@ -527,6 +675,7 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
             if(strcmp(senha,confirmaSenha) != 0 ){
                 printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                 printf("As senhas são diferentes...\n\n");
+                //LIMPAR ARRAY
                 memset(senha, 0, 100);
                 memset(confirmaSenha, 0, 100);
             } else {
@@ -743,7 +892,7 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     fclose(arq);
 
 }
-int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
+int VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
     int i=0;
     STRC_LOGIN LOGIN;
 
@@ -799,7 +948,7 @@ int  VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
             validaCelular = true;
             printf("\nDigite o celular com DDD (somente números): ");
             gets(LOGIN.CELULAR);
-            
+
             if(strlen(LOGIN.CELULAR) > 90){
                 printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                 printf("Tamanho máximo de 90 caracteres...\n\n");
@@ -925,8 +1074,7 @@ void CADASTRA_ESPACO(){
     STRC_ESPACO ESPACO;
     char confirm;
 
-    printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-    printf("Digite ""%s0%s"" para retornar ao menu anterior...\n",COLOR_YELLOW,COLOR_RESET);
+    MSG_RETORNO();
 
     //NOME COMPLETO
     if (VALIDA_DADOS_ESPACO("NOME_ESPACO",&ESPACO) == false) return 0;
@@ -1003,16 +1151,16 @@ void LISTAR_ESPACO(int op){
 
             if (op == 1 ) {
                if(strcmp(buscar,ESPACO.NOME_ESPACO) == 0){
-                   PRINTAR_ESPACO(&ESPACO);
+                   PRINTAR_ESPACO(&ESPACO,0);
                    count++;
                }
             } else if (op == 2){
                if(strcmp(buscar,ESPACO.TP_ESPACO) == 0){
-                   PRINTAR_ESPACO(&ESPACO);
+                   PRINTAR_ESPACO(&ESPACO,0);
                    count++;
                }
             } else {
-               PRINTAR_ESPACO(&ESPACO);
+               PRINTAR_ESPACO(&ESPACO,0);
                count++;
             }
         }
@@ -1063,11 +1211,11 @@ void ALTERAR_ESPACO(boolean fl_criaCabecalho){
     for (i=0; i < strlen(buscar); i++) {
         buscar[i] = toupper(buscar[i]);
     }
-    
+
     arq = fopen(ARQ_ESPACO,"rb");
 
-    while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){ 
-        sprintf(STR_ID,"%d",ESPACO.ID); 
+    while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){
+        sprintf(STR_ID,"%d",ESPACO.ID);
         if(strcmp(buscar,STR_ID) == 0 || strcmp(buscar,ESPACO.NOME_ESPACO) == 0){
             fclose(arq);
             count++;
@@ -1134,7 +1282,7 @@ void ALTERAR_ESPACO(boolean fl_criaCabecalho){
     fclose(arq);
 
 }
-int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
+int VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
     STRC_ESPACO ESPACO;
     boolean valida, validaAux;
     int i;
@@ -1163,7 +1311,7 @@ int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
                     arq = fopen(ARQ_ESPACO,"rb");
                     if(arq  != NULL) {
                         while(fread(&ESPACO_BUSCA, sizeof(ESPACO_BUSCA), 1, arq)){
-                            if (strcmp(ESPACO.NOME_ESPACO,ESPACO_BUSCA.NOME_ESPACO) == 0 ){ 
+                            if (strcmp(ESPACO.NOME_ESPACO,ESPACO_BUSCA.NOME_ESPACO) == 0 ){
                                 printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                                 printf("Nome já cadastrado na base de dados...\n\n");
                                 validaAux = false;
@@ -1264,16 +1412,200 @@ int  VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
     }
     return 1;
 }
-void PRINTAR_ESPACO(STRC_ESPACO *ESPACO){
+void PRINTAR_ESPACO(STRC_ESPACO *ESPACO, boolean fl_bloqueiaCampos){
     printf("\n%sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,ESPACO->ID);
     printf("\n%sNome do espaço:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO->NOME_ESPACO);
     printf("\n%sCapacidade:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO->CAPACIDADE);
     printf("\n%sTipo de espaço:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO->TP_ESPACO);
     printf("\n%sObservação:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO->OBSERVACAO);
-    printf("\n%sStatus:%s %s%s%s\n\n",COLOR_CYAN,COLOR_RESET,ESPACO->STATUS==1?COLOR_GREEN:COLOR_RED,ESPACO->STATUS==1?"Ativo":"Inativo",COLOR_RESET);
+    if (fl_bloqueiaCampos != 1) printf("\n%sStatus:%s %s%s%s\n\n",COLOR_CYAN,COLOR_RESET,ESPACO->STATUS==1?COLOR_GREEN:COLOR_RED,ESPACO->STATUS==1?"Ativo":"Inativo",COLOR_RESET);
+    else printf("\n\n");
     SEPARADOR();
     printf("\n");
 }
 //=======================================================================================================
 //ESPAÇO
 //=======================================================================================================
+void CADASTRA_AGENDAMENTO(){
+
+    CABECALHO();
+    printf("%sMenu inicial > Agendamentos >%s %sSolicitar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+
+    STRC_AGENDAMENTO AGENDAMENTO;
+    char confirm;
+
+    MSG_RETORNO();
+
+    //SELECIONA ESPAÇO
+    //if (VALIDA_DADOS_AGENDAMENTO("ESPACO",&AGENDAMENTO) == false) return 0;
+
+    //INFORMA DH_INICIO E DH_FINAL
+    if (VALIDA_DADOS_AGENDAMENTO("DH_INICIO_FIM",&AGENDAMENTO) == false) return 0;
+
+    do{
+        CABECALHO();
+        printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+
+        //ESPAÇO
+        SEPARADOR();
+        printf("\n\n%sEspaço%s\n",COLOR_PURPLE,COLOR_RESET);
+        printf("\n%sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.ID);
+        printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.NOME_ESPACO);
+        printf("\n%sCapidade:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.CAPACIDADE);
+        printf("\n%sTipo:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.TP_ESPACO);
+        printf("\n%sObservação:%s %s\n\n",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.OBSERVACAO);
+        SEPARADOR();
+
+        do{
+            printf("\n\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+            confirm = tolower(getche());
+        } while(confirm != 's' && confirm != 'n');
+
+        if(confirm == 's'){
+            // BUSCAR_ID(ARQ_ESPACO,&ESPACO.ID);
+            // arq = fopen(ARQ_ESPACO,"a+b");
+            // fwrite(&ESPACO,sizeof(ESPACO),1,arq);
+            // fclose(arq);
+            // printf("\n\nEspaço criado com sucesso...");
+        }
+
+    } while(confirm != 's' && confirm != 'n');
+
+    printf("\n\n");
+    system("pause");
+    return 0;
+
+}
+int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
+    STRC_AGENDAMENTO AGENDAMENTO;
+    boolean valida, validaAux;
+    int i,confirm,dt_tratamento[3];
+    char buscar[100], STR_ID[100];
+
+    if (strcmp("ESPACO",campo) == 0){
+        //NOME DO ESPAÇO
+        do{
+            valida = false;
+            printf("\n\nDigite o código/nome do espaço ou tecle enter para listar: ");
+            gets(buscar);
+
+            if(strlen(buscar) == 0){
+                arq = fopen(ARQ_ESPACO,"rb");
+                if(arq  != NULL) {
+                    printf("\n");
+                    SEPARADOR();
+                    printf("\n");
+                    while(fread(&AGENDAMENTO.ESPACO, sizeof(AGENDAMENTO.ESPACO), 1, arq)){
+                        if(AGENDAMENTO.ESPACO.STATUS == 1){
+                            PRINTAR_ESPACO(&AGENDAMENTO.ESPACO,1);
+                        }
+                    }
+                } else {
+                    fclose(arq);
+                    printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Nenhum espaço cadastrado, contate o administrador do sistemaa...\n\n");
+                }
+                fclose(arq);
+            } else if(strlen(buscar) > 90){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Tamanho máximo de 90 caracteres...\n\n");
+            } else {
+                if(strcmp(buscar,"0") == 0) return 0;
+                else{
+                    for (i=0; i < strlen(buscar); i++) {
+                        buscar[i] = toupper(buscar[i]);
+                    }
+
+                    validaAux = false;
+
+                    arq = fopen(ARQ_ESPACO,"rb");
+                    if(arq  != NULL) {
+                        while(fread(&AGENDAMENTO.ESPACO, sizeof(AGENDAMENTO.ESPACO), 1, arq)){
+                            sprintf(STR_ID,"%d",AGENDAMENTO.ESPACO.ID);
+                            if((strcmp(buscar,STR_ID) == 0 || strcmp(buscar,AGENDAMENTO.ESPACO.NOME_ESPACO) == 0) && AGENDAMENTO.ESPACO.STATUS == 1){
+                                validaAux = true;
+                                fclose(arq);
+                                break;
+                            }
+                        }
+                    } else {
+                        fclose(arq);
+                        printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                        printf("Nenhum espaço cadastrado, contate o administrador do sistema...\n\n");
+                    }
+                    fclose(arq);
+
+                    if (validaAux == true){
+                        printf("\n\n");
+                        SEPARADOR();
+                        printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                        printf("Espaço selecionado:\n");
+                        PRINTAR_ESPACO(&AGENDAMENTO.ESPACO,1);
+                        do {
+                            printf("\n\nDeseja continuar? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+                            confirm = tolower(getche());
+                        } while(confirm != 's' && confirm != 'n');
+                        if (confirm == 's') valida = true;
+                    } else {
+                        printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                        printf("Nenhum espaço encontrado. Por favor, tente novamente...\n\n");
+                        valida = false;
+                    }
+
+                }
+            }
+
+        }while(valida == false);
+        STRC_RETORNO->ESPACO = AGENDAMENTO.ESPACO;
+        STRC_RETORNO->ESPACO_ID = AGENDAMENTO.ESPACO.ID;
+
+    } else if(strcmp("DH_INICIO_FIM",campo) == 0){
+
+        do{
+            //RESET DE VARIAVEIS
+            valida = false;
+            memset(dt_tratamento,0,3);
+            AGENDAMENTO.DAY_INICIO = 0;
+            AGENDAMENTO.MONTH_INICIO = 0;
+            AGENDAMENTO.YEAR_INICIO = 0;
+
+            printf("\n\nDigite a data início %s[DD/MM/AAAA]%s: ",COLOR_YELLOW,COLOR_RESET);
+            gets(buscar);
+
+            if(strlen(buscar) == 0){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("A data de início é obrigatória...\n\n");
+            } else if(strlen(buscar) != 10){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Data digitada inválida...\n\n");
+            } else {
+                if(strcmp(buscar,"0") == 0) return 0;
+                else {
+                    PREPARA_ENTRADA_DATA(buscar,&dt_tratamento);
+                    AGENDAMENTO.DAY_INICIO = dt_tratamento[0];
+                    AGENDAMENTO.MONTH_INICIO = dt_tratamento[1];
+                    AGENDAMENTO.YEAR_INICIO = dt_tratamento[2];
+
+                    printf("\nFinal: ");
+                    FORMATA_DATA(AGENDAMENTO.DAY_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.YEAR_INICIO);
+
+                    if (AGENDAMENTO.DAY_INICIO == 0 || AGENDAMENTO.MONTH_INICIO == 0 || AGENDAMENTO.YEAR_INICIO == 0){
+                        printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                        printf("Data digitada inválida...\n\n");
+                    } else {
+                        valida = VALIDA_ENTRADA_DATA(AGENDAMENTO.DAY_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.YEAR_INICIO);
+
+                        printf("\nValida: %i\n", valida);
+
+                        valida = false;
+                    }
+                }
+                // else {
+                //     //valida = true;
+                // }
+            }
+
+        }while(valida == false);
+    }
+    return 1;
+}
