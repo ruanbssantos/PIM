@@ -41,26 +41,27 @@ typedef struct {
     char TP_ESPACO[100];
     char OBSERVACAO[100];
     int STATUS;
-    int LIMITE_TEMPO;
 
 }STRC_ESPACO;
 
 typedef struct {
     int ID;
+    char ASSUNTO[100];
     int ESPACO_ID;
     int DAY_INICIO;
     int MONTH_INICIO;
     int YEAR_INICIO;
+    int HOUR_INICIO;
+    int MIN_INICIO;
+    long DH_INICIO;
     int DAY_FIM;
     int MONTH_FIM;
     int YEAR_FIM;
-    int DIA_SEMANAS;
-    char ASSUNTO[100];
-    int USUARIO_ID[100];
-    int STATUS;
-    int LIMITE_TEMPO;
-    long DH_INICIO;
+    int HOUR_FIM;
+    int MIN_FIM;    
     long DH_FINAL;
+    int USUARIO_ID;
+    int STATUS;  
     int AVALIACAO;
     char FEEDBACK[100];
     
