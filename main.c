@@ -43,9 +43,8 @@ int main(){
     // }while (session == 0);
 
     if (session_nivelAcesso == 2){
-        
-        //MENU_PRINCIPAL_ADM();
-        CADASTRA_AGENDAMENTO();
+        MENU_PRINCIPAL_ADM();
+        //CADASTRA_AGENDAMENTO();
     }
 
     SetConsoleOutputCP(CPAGE_DEFAULT);

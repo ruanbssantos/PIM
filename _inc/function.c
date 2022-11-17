@@ -161,20 +161,35 @@ void MSG_RETORNO(){
     printf("Para retornar ao menu anterior, digite ""%s0%s"" a qualquer momento...\n",COLOR_YELLOW,COLOR_RESET);
 }
 //FORMATA DATA PARA BR
-void FORMATA_DATA(int d, int m, int y){
-    char day[100],month[100],year[100],resultado[100];
+void FORMATA_DATA_HORA(char *retorno[],int year, int month, int day, int hour, int min) {
+    char str_day[100],str_month[100],str_year[100],str_hour[100],str_min[100],resultado[100] = "";
 
-    if (d) sprintf(day, "%02d", d);
-    if (m) sprintf(month, "%02d", m);
-    if (y) sprintf(year, "%04d", y);
+    if (day != ""){
+        sprintf(str_day, "%02d", day);
+        strcat(resultado,str_day);
+        strcat(resultado,"/");
+    }
+    if (month != ""){
+        sprintf(str_month, "%02d", month);
+        strcat(resultado,str_month);
+        strcat(resultado,"/");
+    }
+    if (year != ""){
+        sprintf(str_year, "%04d", year);
+        strcat(resultado,str_year);
+        strcat(resultado," - ");
+    }
+    if (hour != ""){
+        sprintf(str_hour, "%02d", hour);
+        strcat(resultado,str_hour);
+        strcat(resultado,":");
+    }
+    if (min != ""){
+        sprintf(str_min, "%02d", min);
+        strcat(resultado,str_min);
+    }
 
-    // strcpy(resultado,day);
-    // strcat(resultado,"/");
-    // strcat(resultado,month);
-    // strcat(resultado,"/");
-    // strcat(resultado,year);
-
-    printf("%s/%s/%s",day,month,year);
+    strcpy(retorno,resultado);
 }
 //PREPARA DATA ENTRADA USUÁRIO
 void PREPARA_ENTRADA_DATA(char buscar[],int *dt){
@@ -197,8 +212,7 @@ void PREPARA_ENTRADA_DATA(char buscar[],int *dt){
 //PREPARA DH STRUCT LONG - SAIDA
 void PREPARA_DATA_STRC(long *retorno,int year, int month, int day, int hour, int min){
 
-    printf("\n\n%d | %d | %d | %d | %d", year,month,day,hour,min);
-
+    //printf("\n\n%d | %d | %d | %d | %d", year,month,day,hour,min);
     char str_day[100],str_month[100],str_year[100],str_hour[100],str_min[100],resultado[100] = "";
 
     if (year != ""){
@@ -223,7 +237,7 @@ void PREPARA_DATA_STRC(long *retorno,int year, int month, int day, int hour, int
     }
 
 
-    printf("\nRETORNO LONG: %s \n\n", resultado);
+    //printf("\nRETORNO LONG: %s \n\n", resultado);
     *retorno = atol(resultado);
 
 }
@@ -1502,11 +1516,15 @@ void CADASTRA_AGENDAMENTO(){
 
     STRC_AGENDAMENTO AGENDAMENTO;
     char confirm;
+    char dt[100];
 
     MSG_RETORNO();
 
+    //SELECIONA ASSUNTO
+    if (VALIDA_DADOS_AGENDAMENTO("ASSUNTO",&AGENDAMENTO) == false) return 0;
+
     //SELECIONA ESPAÇO
-    //if (VALIDA_DADOS_AGENDAMENTO("ESPACO",&AGENDAMENTO) == false) return 0;
+    if (VALIDA_DADOS_AGENDAMENTO("ESPACO",&AGENDAMENTO) == false) return 0;
 
     //INFORMA DH_FIM E DH_FINAL
     if (VALIDA_DADOS_AGENDAMENTO("DH_FIM_FIM",&AGENDAMENTO) == false) return 0;
@@ -1515,6 +1533,15 @@ void CADASTRA_AGENDAMENTO(){
         CABECALHO();
         printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
 
+        //ASSUNTO
+        SEPARADOR();
+        //HORA
+        printf("\n\n%sInformações%s\n",COLOR_PURPLE,COLOR_RESET);
+        printf("\n%sAssunto:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ASSUNTO);
+        FORMATA_DATA_HORA(&dt,AGENDAMENTO.YEAR_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.DAY_INICIO,AGENDAMENTO.HOUR_INICIO,AGENDAMENTO.MIN_INICIO);
+        printf("\n%sEntrada:%s %s",COLOR_CYAN,COLOR_RESET,dt);
+        FORMATA_DATA_HORA(&dt,AGENDAMENTO.YEAR_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.DAY_FIM,AGENDAMENTO.HOUR_FIM,AGENDAMENTO.MIN_FIM);
+        printf("\n%sSaída:%s %s\n\n",COLOR_CYAN,COLOR_RESET,dt);
         //ESPAÇO
         SEPARADOR();
         printf("\n\n%sEspaço%s\n",COLOR_PURPLE,COLOR_RESET);
@@ -1524,6 +1551,7 @@ void CADASTRA_AGENDAMENTO(){
         printf("\n%sTipo:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.TP_ESPACO);
         printf("\n%sObservação:%s %s\n\n",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.OBSERVACAO);
         SEPARADOR();
+
 
         do{
             printf("\n\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
@@ -1556,7 +1584,7 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
     char buscar[100], STR_ID[100];
     long DH_ATUAL_LONG;
 
-    if (strcmp("assunto",campo) == 0){
+    if (strcmp("ASSUNTO",campo) == 0){
         //NOME DO ESPAÇO
         do{
             valida = false;
@@ -1582,7 +1610,7 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
         //NOME DO ESPAÇO
         do{
             valida = false;
-            printf("\n\nDigite o código/nome do espaço ou tecle enter para listar: ");
+            printf("\nDigite o código/nome do espaço ou tecle enter para listar: ");
             gets(buscar);
 
             if(strlen(buscar) == 0){
@@ -1655,7 +1683,7 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
         STRC_RETORNO->ESPACO = AGENDAMENTO.ESPACO;
         STRC_RETORNO->ESPACO_ID = AGENDAMENTO.ESPACO.ID;
 
-    } else if(strcmp("DH_FIM_FIM",campo) == 0){
+    } else if (strcmp("DH_FIM_FIM",campo) == 0){
 
         do {
 
@@ -1664,9 +1692,9 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 //RESET DE VARIAVEIS
                 valida = false;
                 memset(dt_tratamento,0,3);
-                AGENDAMENTO.DAY_FIM = 0;
-                AGENDAMENTO.MONTH_FIM = 0;
-                AGENDAMENTO.YEAR_FIM = 0;
+                AGENDAMENTO.DAY_INICIO = 0;
+                AGENDAMENTO.MONTH_INICIO = 0;
+                AGENDAMENTO.YEAR_INICIO = 0;
 
                 printf("\n\nDigite a data inicial %s[DD/MM/AAAA]%s: ",COLOR_YELLOW,COLOR_RESET);
                 gets(buscar);
@@ -1681,15 +1709,15 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                     if(strcmp(buscar,"0") == 0) return 0;
                     else {
                         PREPARA_ENTRADA_DATA(buscar,&dt_tratamento);
-                        AGENDAMENTO.DAY_FIM = dt_tratamento[0];
-                        AGENDAMENTO.MONTH_FIM = dt_tratamento[1];
-                        AGENDAMENTO.YEAR_FIM = dt_tratamento[2];
-                        
-                        if (AGENDAMENTO.DAY_FIM == 0 || AGENDAMENTO.MONTH_FIM == 0 || AGENDAMENTO.YEAR_FIM == 0){
+                        AGENDAMENTO.DAY_INICIO = dt_tratamento[0];
+                        AGENDAMENTO.MONTH_INICIO = dt_tratamento[1];
+                        AGENDAMENTO.YEAR_INICIO = dt_tratamento[2];
+
+                        if (AGENDAMENTO.DAY_INICIO == 0 || AGENDAMENTO.MONTH_INICIO == 0 || AGENDAMENTO.YEAR_INICIO == 0){
                             printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                             printf("Data digitada inválida...\n\n");
                         } else {
-                            valida = VALIDA_ENTRADA_DATA(AGENDAMENTO.DAY_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.YEAR_FIM);
+                            valida = VALIDA_ENTRADA_DATA(AGENDAMENTO.DAY_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.YEAR_INICIO);
                         }
                     }
                 }
@@ -1700,10 +1728,10 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 //RESET DE VARIAVEIS
                 valida = false;
                 memset(hr,0,2);
-                AGENDAMENTO.HOUR_FIM = 0;
-                AGENDAMENTO.MIN_FIM = 0;
+                AGENDAMENTO.HOUR_INICIO = 0;
+                AGENDAMENTO.MIN_INICIO = 0;
 
-                printf("\n\nDigite a hora inicial %s[HH:MM]%s: ",COLOR_YELLOW,COLOR_RESET);
+                printf("\nDigite a hora inicial %s[HH:MM]%s: ",COLOR_YELLOW,COLOR_RESET);
                 gets(buscar);
 
                 if(strlen(buscar) == 0){
@@ -1720,9 +1748,9 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                         printf("Hora digitada inválida...\n\n");
                     } else {
                         PREPARA_ENTRADA_HORA(buscar,&hr);
-                        AGENDAMENTO.HOUR_FIM = hr[0];
-                        AGENDAMENTO.MIN_FIM = hr[1];
-                        valida = VALIDA_ENTRADA_HORA(AGENDAMENTO.HOUR_FIM,AGENDAMENTO.MIN_FIM);
+                        AGENDAMENTO.HOUR_INICIO = hr[0];
+                        AGENDAMENTO.MIN_INICIO = hr[1];
+                        valida = VALIDA_ENTRADA_HORA(AGENDAMENTO.HOUR_INICIO,AGENDAMENTO.MIN_INICIO);
                     }
                 }
             }while(valida == false);
@@ -1736,7 +1764,7 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 AGENDAMENTO.MONTH_FIM = 0;
                 AGENDAMENTO.YEAR_FIM = 0;
 
-                printf("\n\nDigite a data final %s[DD/MM/AAAA]%s: ",COLOR_YELLOW,COLOR_RESET);
+                printf("\nDigite a data final %s[DD/MM/AAAA]%s: ",COLOR_YELLOW,COLOR_RESET);
                 gets(buscar);
 
                 if(strlen(buscar) == 0){
@@ -1752,7 +1780,7 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                         AGENDAMENTO.DAY_FIM = dt_tratamento[0];
                         AGENDAMENTO.MONTH_FIM = dt_tratamento[1];
                         AGENDAMENTO.YEAR_FIM = dt_tratamento[2];
-                        
+
                         if (AGENDAMENTO.DAY_FIM == 0 || AGENDAMENTO.MONTH_FIM == 0 || AGENDAMENTO.YEAR_FIM == 0){
                             printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                             printf("Data digitada inválida...\n\n");
@@ -1771,7 +1799,7 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 AGENDAMENTO.HOUR_FIM = 0;
                 AGENDAMENTO.MIN_FIM = 0;
 
-                printf("\n\nDigite a hora final %s[HH:MM]%s: ",COLOR_YELLOW,COLOR_RESET);
+                printf("\nDigite a hora final %s[HH:MM]%s: ",COLOR_YELLOW,COLOR_RESET);
                 gets(buscar);
 
                 if(strlen(buscar) == 0){
@@ -1797,25 +1825,45 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
 
 
             //CRIA LONG DT INICIO
-            PREPARA_DATA_STRC(&AGENDAMENTO.DH_INICIO,AGENDAMENTO.YEAR_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.DAY_FIM,AGENDAMENTO.HOUR_FIM,AGENDAMENTO.MIN_FIM);
+            PREPARA_DATA_STRC(&AGENDAMENTO.DH_INICIO,AGENDAMENTO.YEAR_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.DAY_INICIO,AGENDAMENTO.HOUR_INICIO,AGENDAMENTO.MIN_INICIO);
+            //CRIA LONG DT FINAL
+            PREPARA_DATA_STRC(&AGENDAMENTO.DH_FINAL,AGENDAMENTO.YEAR_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.DAY_FIM,AGENDAMENTO.HOUR_FIM,AGENDAMENTO.MIN_FIM);
             //CRIA LONG DT ATUAL
             DH_ATUAL(&DH);
             PREPARA_DATA_STRC(&DH_ATUAL_LONG,atoi(DH.ANO),atoi(DH.MES),atoi(DH.DIA),atoi(DH.HORAS),atoi(DH.MINUTOS));
 
+            valida = false;
+
             if (DH_ATUAL_LONG > AGENDAMENTO.DH_INICIO) {
                 printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-                printf("Data retroativa desabilitada...\n\n");
-                valida = false;
-            } else if (DH_ATUAL_LONG < AGENDAMENTO.DH_INICIO) {
-                printf("DT ENTRADA É MAIOR");
+                printf("Data retroativa indisponível...\n\n");
+            } else if (AGENDAMENTO.DH_FINAL < AGENDAMENTO.DH_INICIO) {
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Data final não pode ser menor que a inicial...\n\n");
             } else {
-                printf("Os dois são iguais");
+
+                STRC_RETORNO->DH_INICIO = AGENDAMENTO.DH_INICIO;
+                STRC_RETORNO->YEAR_INICIO = AGENDAMENTO.YEAR_INICIO;
+                STRC_RETORNO->MONTH_INICIO = AGENDAMENTO.MONTH_INICIO;
+                STRC_RETORNO->DAY_INICIO = AGENDAMENTO.DAY_INICIO;
+                STRC_RETORNO->HOUR_INICIO = AGENDAMENTO.HOUR_INICIO;
+                STRC_RETORNO->MIN_INICIO = AGENDAMENTO.MIN_INICIO;
+
+                STRC_RETORNO->DH_FINAL = AGENDAMENTO.DH_FINAL;
+                STRC_RETORNO->YEAR_FIM = AGENDAMENTO.YEAR_FIM;
+                STRC_RETORNO->MONTH_FIM = AGENDAMENTO.MONTH_FIM;
+                STRC_RETORNO->DAY_FIM = AGENDAMENTO.DAY_FIM;
+                STRC_RETORNO->HOUR_FIM = AGENDAMENTO.HOUR_FIM;
+                STRC_RETORNO->MIN_FIM = AGENDAMENTO.MIN_FIM;
+
+                STRC_RETORNO->USUARIO_ID = session_usuarioID;
+
+                valida = true;
             }
 
         } while(valida == false);
 
 
-        system("pause");
 
     }
     return 1;
