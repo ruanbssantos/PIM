@@ -1507,7 +1507,7 @@ void PRINTAR_ESPACO(STRC_ESPACO *ESPACO, boolean fl_bloqueiaCampos){
     printf("\n");
 }
 //=======================================================================================================
-//ESPAÇO
+//AGENDAMENTO
 //=======================================================================================================
 void CADASTRA_AGENDAMENTO(){
 
@@ -1534,14 +1534,20 @@ void CADASTRA_AGENDAMENTO(){
         printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
 
         //ASSUNTO
-        SEPARADOR();
-        //HORA
+        SEPARADOR(); 
         printf("\n\n%sInformações%s\n",COLOR_PURPLE,COLOR_RESET);
         printf("\n%sAssunto:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ASSUNTO);
         FORMATA_DATA_HORA(&dt,AGENDAMENTO.YEAR_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.DAY_INICIO,AGENDAMENTO.HOUR_INICIO,AGENDAMENTO.MIN_INICIO);
         printf("\n%sEntrada:%s %s",COLOR_CYAN,COLOR_RESET,dt);
         FORMATA_DATA_HORA(&dt,AGENDAMENTO.YEAR_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.DAY_FIM,AGENDAMENTO.HOUR_FIM,AGENDAMENTO.MIN_FIM);
         printf("\n%sSaída:%s %s\n\n",COLOR_CYAN,COLOR_RESET,dt);
+         //ASSUNTO
+        SEPARADOR(); 
+        printf("\n\n%sSolicitante%s\n",COLOR_PURPLE,COLOR_RESET); 
+        printf("\n%sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.ID);
+        printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.NOME_COMPLETO); 
+        printf("\n%sCelular:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.CELULAR); 
+        printf("\n%sE-mail:%s %s\n\n",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.USUARIO); 
         //ESPAÇO
         SEPARADOR();
         printf("\n\n%sEspaço%s\n",COLOR_PURPLE,COLOR_RESET);
@@ -1576,7 +1582,8 @@ void CADASTRA_AGENDAMENTO(){
 int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
     //FORMATA_DATA(AGENDAMENTO.DAY_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.YEAR_FIM);
 
-    STRC_AGENDAMENTO AGENDAMENTO;
+    STRC_AGENDAMENTO AGENDAMENTO; 
+    STRC_AGENDAMENTO AGENDAMENTO_AUX; 
     STRC_DH DH;
 
     boolean valida, validaAux;
@@ -1842,23 +1849,66 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 printf("Data final não pode ser menor que a inicial...\n\n");
             } else {
 
-                STRC_RETORNO->DH_INICIO = AGENDAMENTO.DH_INICIO;
-                STRC_RETORNO->YEAR_INICIO = AGENDAMENTO.YEAR_INICIO;
-                STRC_RETORNO->MONTH_INICIO = AGENDAMENTO.MONTH_INICIO;
-                STRC_RETORNO->DAY_INICIO = AGENDAMENTO.DAY_INICIO;
-                STRC_RETORNO->HOUR_INICIO = AGENDAMENTO.HOUR_INICIO;
-                STRC_RETORNO->MIN_INICIO = AGENDAMENTO.MIN_INICIO;
 
-                STRC_RETORNO->DH_FINAL = AGENDAMENTO.DH_FINAL;
-                STRC_RETORNO->YEAR_FIM = AGENDAMENTO.YEAR_FIM;
-                STRC_RETORNO->MONTH_FIM = AGENDAMENTO.MONTH_FIM;
-                STRC_RETORNO->DAY_FIM = AGENDAMENTO.DAY_FIM;
-                STRC_RETORNO->HOUR_FIM = AGENDAMENTO.HOUR_FIM;
-                STRC_RETORNO->MIN_FIM = AGENDAMENTO.MIN_FIM;
+                arq = fopen(ARQ_AGENDAMENTO,"rb"); 
+                if(arq==NULL){
+                    valida = true;
+                } else {
+                    
+                    while(fread(&AGENDAMENTO_AUX, sizeof(AGENDAMENTO_AUX), 1, arq)){
+                        if(session_usuarioID == AGENDAMENTO.USUARIO.ID &&  AGENDAMENTO.USUARIO.STATUS == 1){
+                            valida = true;
+                            break;                        
+                        } 
+                    }
+                }
+                fclose(arq);
 
-                STRC_RETORNO->USUARIO_ID = session_usuarioID;
+                if(valida == true){ 
 
-                valida = true;
+                    valida = false;
+
+                    arq = fopen(ARQ_LOGIN,"rb"); 
+                    while(fread(&AGENDAMENTO.USUARIO, sizeof(AGENDAMENTO.USUARIO), 1, arq)){
+                        if(session_usuarioID == AGENDAMENTO.USUARIO.ID &&  AGENDAMENTO.USUARIO.STATUS == 1){
+                            valida = true;
+                            break;                        
+                        } 
+                    }
+                    fclose(arq);
+
+                    if(valida == true){
+                        STRC_RETORNO->DH_INICIO = AGENDAMENTO.DH_INICIO;
+                        STRC_RETORNO->YEAR_INICIO = AGENDAMENTO.YEAR_INICIO;
+                        STRC_RETORNO->MONTH_INICIO = AGENDAMENTO.MONTH_INICIO;
+                        STRC_RETORNO->DAY_INICIO = AGENDAMENTO.DAY_INICIO;
+                        STRC_RETORNO->HOUR_INICIO = AGENDAMENTO.HOUR_INICIO;
+                        STRC_RETORNO->MIN_INICIO = AGENDAMENTO.MIN_INICIO;
+
+                        STRC_RETORNO->DH_FINAL = AGENDAMENTO.DH_FINAL;
+                        STRC_RETORNO->YEAR_FIM = AGENDAMENTO.YEAR_FIM;
+                        STRC_RETORNO->MONTH_FIM = AGENDAMENTO.MONTH_FIM;
+                        STRC_RETORNO->DAY_FIM = AGENDAMENTO.DAY_FIM;
+                        STRC_RETORNO->HOUR_FIM = AGENDAMENTO.HOUR_FIM;
+                        STRC_RETORNO->MIN_FIM = AGENDAMENTO.MIN_FIM;
+
+                        STRC_RETORNO->USUARIO = AGENDAMENTO.USUARIO;
+                        STRC_RETORNO->USUARIO_ID = AGENDAMENTO.USUARIO.ID;
+
+                    } else {
+
+                        printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                        printf("Usuário não localizado na base de dados. Por favor, contate o administrador do sistema...\n\n");
+                        system("pause");
+                        exit(1);
+                    }
+                } else {
+                    printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Já existe um agendamento no período selecionado...\n\n");
+                    system("pause");
+                }
+
+ 
             }
 
         } while(valida == false);
