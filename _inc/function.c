@@ -266,6 +266,7 @@ void PREPARA_ENTRADA_HORA(char buscar[],int *hr){
     }
 
 }
+
 //=======================================================================================================
 //FUNCTIONS VALIDAÇÃO
 //=======================================================================================================
@@ -591,6 +592,7 @@ void MENU_AGENDAMENTOS(){
         printf("[%s2%s] - Check-in\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s3%s] - Check-out\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s4%s] - Cancelamento\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s5%s] - Histórico\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
 
         printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
@@ -603,10 +605,16 @@ void MENU_AGENDAMENTOS(){
                 CADASTRA_AGENDAMENTO();
                 break;
             case 2:
-                LISTRAR_AGENDAMENTOS(1);
+                LISTAR_AGENDAMENTOS(2,1,2);
                 break;
             case 3:
-                LISTRAR_AGENDAMENTOS(99);
+                LISTAR_AGENDAMENTOS(3,2,3);
+                break;
+            case 4:
+                LISTAR_AGENDAMENTOS(4,NULL,4);
+                break;
+            case 5:
+                LISTAR_AGENDAMENTOS(5,NULL,NULL);
                 break;
             case 0:
                 MENU_PRINCIPAL_ADM();
@@ -851,10 +859,7 @@ void LISTAR_USUARIOS(int op){
         while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
 
             if (op == 1) {
-                for (i=0; i < strlen(buscar); i++) {
-                    buscar[i] = toupper(buscar[i]);
-                }
-                if(strcmp(buscar,LOGIN.NOME_COMPLETO) == 0){
+                if(strcmp(strupr(buscar),LOGIN.NOME_COMPLETO) == 0){
                     PRINTAR_USUARIO(&LOGIN);
                     count_usuario++;
                 }
@@ -1232,20 +1237,17 @@ void LISTAR_ESPACO(int op){
             printf("\nDigite o %s: ", op==1?"nome":"tipo");
             gets(buscar);
             if(strcmp(buscar,"0") == 0) return 0;
-            for (i=0; i < strlen(buscar); i++) {
-                buscar[i] = toupper(buscar[i]);
-            }
         }
 
         while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){
 
             if (op == 1 ) {
-               if(strcmp(buscar,ESPACO.NOME_ESPACO) == 0){
+               if(strcmp(strupr(buscar),ESPACO.NOME_ESPACO) == 0){
                    PRINTAR_ESPACO(&ESPACO,0);
                    count++;
                }
             } else if (op == 2){
-               if(strcmp(buscar,ESPACO.TP_ESPACO) == 0){
+               if(strcmp(strupr(buscar),ESPACO.TP_ESPACO) == 0){
                    PRINTAR_ESPACO(&ESPACO,0);
                    count++;
                }
@@ -1298,15 +1300,11 @@ void ALTERAR_ESPACO(boolean fl_criaCabecalho){
     printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
     printf("Digite o código ou nome do espaço: ");
     gets(buscar);
-    for (i=0; i < strlen(buscar); i++) {
-        buscar[i] = toupper(buscar[i]);
-    }
 
     arq = fopen(ARQ_ESPACO,"rb");
-
     while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){
         sprintf(STR_ID,"%d",ESPACO.ID);
-        if(strcmp(buscar,STR_ID) == 0 || strcmp(buscar,ESPACO.NOME_ESPACO) == 0){
+        if(strcmp(strupr(buscar),STR_ID) == 0 || strcmp(strupr(buscar),ESPACO.NOME_ESPACO) == 0){
             fclose(arq);
             count++;
             do{
@@ -1585,47 +1583,64 @@ void CADASTRA_AGENDAMENTO(){
     return 0;
 
 }
-void LISTRAR_AGENDAMENTOS(int STATUS_ID){
+void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
     STRC_AGENDAMENTO AGENDAMENTO;
     STRC_DH DH;
     boolean fl_econtrou,fl_liberaLoop;
     long long DH_ATUAL_LONG;
     int count = 0, posicaoArq = 0;
-    char buscar[100];
+    char buscar[100],confirm;
+    char tipo[100];
 
+    if (op == 2)
+        strcpy(tipo,"Check-in");
+    else if (op == 3)
+        strcpy(tipo,"Check-out");
+    else if (op == 4)
+        strcpy(tipo,"Cancelamento");
+    else if (op ==5)
+        strcpy(tipo,"Histórico");
 
     do {
         CABECALHO();
-        printf("%sMenu inicial > Agendamentos >%s %sCheck-in%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        printf("%sMenu inicial > Agendamentos >%s %s%s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipo,COLOR_RESET);
 
-        fl_liberaLoop == false;
+        posicaoArq = 0;
+        fl_liberaLoop = false;
 
         //CRIA LONG DT ATUAL
         DH_ATUAL(&DH);
         PREPARA_DATA_STRC(&DH_ATUAL_LONG,atoi(DH.ANO),atoi(DH.MES),atoi(DH.DIA),atoi(DH.HORAS),atoi(DH.MINUTOS));
+
 
         arq = fopen(ARQ_AGENDAMENTO,"rb");
         if(arq!=NULL){
             while(fread(&AGENDAMENTO, sizeof(AGENDAMENTO), 1, arq)){
                 fl_econtrou = false;
 
-                if((AGENDAMENTO.USUARIO_ID == session_usuarioID || session_nivelAcesso == 2) && AGENDAMENTO.STATUS == STATUS_ID){
-
-                    if(DH_ATUAL_LONG >= AGENDAMENTO.DH_INICIO && AGENDAMENTO.STATUS == 1){
+                if((AGENDAMENTO.USUARIO_ID == session_usuarioID || session_nivelAcesso == 2) && (AGENDAMENTO.STATUS == STATUS_ID || STATUS_ID ==  NULL)){
+                    if (op == 5) {
                         fl_econtrou = true;
                         count++;
+                    } else {
+                        //AGENDADO - CHECK-IN
+                        if(DH_ATUAL_LONG >= AGENDAMENTO.DH_INICIO && AGENDAMENTO.STATUS == STATUS_ID && STATUS_ID == 1){
+                            fl_econtrou = true;
+                            count++;
+                        //EM ANDAMENTO - CHECK-OUT
+                        }else if(AGENDAMENTO.STATUS == STATUS_ID && STATUS_ID == 2){
+                            fl_econtrou = true;
+                            count++;
+                        //CANCELAMENTO
+                        }else if(AGENDAMENTO.STATUS != 0 && (AGENDAMENTO.STATUS != 3 || session_nivelAcesso == 2) && STATUS_ID == NULL){
+                            fl_econtrou = true;
+                            count++;
+                        }
                     }
                 }
 
-                if(STATUS_ID == 99) {
-                    count++;
-                    fl_econtrou = true;
-                }
-
                 if(fl_econtrou == true){
-
                     if (count == 1) SEPARADOR();
-                   
                     PRINTAR_AGENDAMENTO(&AGENDAMENTO,false);
                     SEPARADOR();
                 }
@@ -1633,50 +1648,90 @@ void LISTRAR_AGENDAMENTOS(int STATUS_ID){
         }
         fclose(arq);
 
-        if (count > 0) {
-            printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        if (count > 0 && op != 5) {
+            printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
             printf("Digite o código da solicitação, %s0%s para voltar: ",COLOR_YELLOW,COLOR_RESET);
             gets(buscar);
 
-            if (strcmp(buscar,"0") == 0) return 0;
-            else {
-
+            if (strcmp(buscar,"0") == 0) {
+                return 0;
+            } else if(strlen(buscar) == 0){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("O código é obrigatório...\n\n");
+                system("pause");
+            } else {
                 fl_econtrou = false;
-                 
+                posicaoArq = 0;
+
                 arq = fopen(ARQ_AGENDAMENTO,"rb");
                 while(fread(&AGENDAMENTO, sizeof(AGENDAMENTO), 1, arq)){
-                    
-                    if(atoi(buscar) == AGENDAMENTO.ID){
-                        AGENDAMENTO.STATUS == 2;
-                        fl_econtrou == true;
-                        break;
+
+                    if((AGENDAMENTO.USUARIO_ID == session_usuarioID || session_nivelAcesso == 2) && (AGENDAMENTO.STATUS == STATUS_ID || STATUS_ID == NULL)){
+                        //AGENDADO - CHECK-IN
+                        if(DH_ATUAL_LONG >= AGENDAMENTO.DH_INICIO && AGENDAMENTO.STATUS == STATUS_ID && STATUS_ID == 1 && atoi(buscar) == AGENDAMENTO.ID){
+                            fl_econtrou = true;
+                            break;
+                        //EM ANDAMENTO - CHECK-OUT
+                        } else if(AGENDAMENTO.STATUS == STATUS_ID && STATUS_ID == 2 && atoi(buscar) == AGENDAMENTO.ID){
+                            fl_econtrou = true;
+                            break;
+                        //CANCELADO
+                        } else if (AGENDAMENTO.STATUS != 0 && (AGENDAMENTO.STATUS != 3 || session_nivelAcesso == 2) && STATUS_ID == NULL && atoi(buscar) == AGENDAMENTO.ID){
+                            fl_econtrou = true;
+                            break;
+                        }
                     }
-                    
-                    posicaoArq = posicaoArq + sizeof(STRC_LOGIN);
+
+                    posicaoArq = posicaoArq + sizeof(STRC_AGENDAMENTO);
                     fseek(arq, posicaoArq, SEEK_SET);
-                }                
+                }
                 fclose(arq);
-                 
+
                 if (fl_econtrou == true){
-                //     arq = fopen(ARQ_ESPACO,"r+b");
-                //     fseek(arq, posicaoArq, SEEK_SET);  //DEFINE O DESLOCAMENTO PARA ONDE ENCONTROU OS DADOS;
-                //     fwrite(&ESPACO,sizeof(STRC_ESPACO),1,arq) == sizeof(STRC_ESPACO); //REESCREVE OS DADOS  NO ARQUIVO;
-                //     fclose(arq);
+                    CABECALHO();
+                    printf("%sMenu inicial > Agendamentos >%s %s%s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipo,COLOR_RESET);
+                    SEPARADOR();
+                    PRINTAR_AGENDAMENTO(&AGENDAMENTO,false);
+                    SEPARADOR();
+
+                    do{
+                        printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                        printf("Deseja realmente realizar %s? %s[S/N]%s: ",strlwr(tipo),COLOR_YELLOW,COLOR_RESET);
+                        confirm = tolower(getche());
+                    } while(confirm != 's' && confirm != 'n');
+
+                    if(confirm == 's'){
+                        fl_liberaLoop = true;
+                        AGENDAMENTO.STATUS = STATUS_NOVO_ID;
+                        arq = fopen(ARQ_AGENDAMENTO,"r+b");
+                        fseek(arq, posicaoArq, SEEK_SET);  //DEFINE O DESLOCAMENTO PARA ONDE ENCONTROU OS DADOS;
+                        fwrite(&AGENDAMENTO,sizeof(STRC_AGENDAMENTO),1,arq) == sizeof(STRC_AGENDAMENTO); //REESCREVE OS DADOS  NO ARQUIVO;
+                        fclose(arq);
+
+                        printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                        printf("%s realizado com sucesso...\n\n",tipo);
+                        system("pause");
+                    }
+
+
                 } else {
-                    printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                    printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("Código da solicitação não encontrado...\n\n");
                     system("pause");
                 }
             }
 
         } else {
-            fl_liberaLoop == true;
-            printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-            printf("Nenhum agendamento liberado para check-in...\n\n");
+            fl_liberaLoop = true;
+            if (!strcmp(tipo,"Histórico") == 0){ 
+                printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                printf("Nenhum agendamento liberado para %s...\n",strlwr(tipo)); 
+            }
+            printf("\n");
             system("pause");
         }
 
-    }while (fl_liberaLoop == false);
+    } while (fl_liberaLoop == false);
 
 
 }
@@ -1744,17 +1799,13 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
             } else {
                 if(strcmp(buscar,"0") == 0) return 0;
                 else{
-                    for (i=0; i < strlen(buscar); i++) {
-                        buscar[i] = toupper(buscar[i]);
-                    }
-
                     validaAux = false;
 
                     arq = fopen(ARQ_ESPACO,"rb");
                     if(arq  != NULL) {
                         while(fread(&AGENDAMENTO.ESPACO, sizeof(AGENDAMENTO.ESPACO), 1, arq)){
                             sprintf(STR_ID,"%d",AGENDAMENTO.ESPACO.ID);
-                            if((strcmp(buscar,STR_ID) == 0 || strcmp(buscar,AGENDAMENTO.ESPACO.NOME_ESPACO) == 0) && AGENDAMENTO.ESPACO.STATUS == 1){
+                            if((strcmp(strupr(buscar),STR_ID) == 0 || strcmp(strupr(buscar),AGENDAMENTO.ESPACO.NOME_ESPACO) == 0) && AGENDAMENTO.ESPACO.STATUS == 1){
                                 validaAux = true;
                                 fclose(arq);
                                 break;
@@ -1777,7 +1828,9 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                             printf("\n\nDeseja continuar? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
                             confirm = tolower(getche());
                         } while(confirm != 's' && confirm != 'n');
+
                         if (confirm == 's') valida = true;
+                        else printf("\n");
                     } else {
                         printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                         printf("Nenhum espaço encontrado. Por favor, tente novamente...\n\n");
