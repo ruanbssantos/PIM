@@ -3,17 +3,16 @@
 //=======================================================================================================
 #include "_inc/function.c" //TODAS AS STRUCTS DO SISTEMA
 int main(){
-
+    
     int CPAGE_UTF8 = 65001;
     int CPAGE_DEFAULT = GetConsoleOutputCP();
 
     SetConsoleOutputCP(CPAGE_UTF8);
 
     //boolean session = false;
-    //int session_nivelAcesso;
 
     boolean session = true;
-    int session_nivelAcesso = 2;
+    session_nivelAcesso = 2;
     session_usuarioID = 1;
 
     arq = fopen(ARQ_LOGIN,"rb");
@@ -30,7 +29,7 @@ int main(){
 
     // do{
     //     CABECALHO();
-    //     LOGIN_VALIDA_ACESSO(&session,&session_nivelAcesso);
+    //     LOGIN_VALIDA_ACESSO(&session);
     //     if (session == true){
     //         printf("%s\n\nAcesso permitido, seja bem-vindo!\n\n%s",COLOR_GREEN,COLOR_RESET);
     //     } else {
@@ -43,6 +42,7 @@ int main(){
     // }while (session == 0);
 
     if (session_nivelAcesso == 2){
+
         MENU_PRINCIPAL_ADM();
         //CADASTRA_AGENDAMENTO();
     }

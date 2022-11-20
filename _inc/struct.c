@@ -53,13 +53,13 @@ typedef struct {
     int YEAR_INICIO;
     int HOUR_INICIO;
     int MIN_INICIO;
-    long DH_INICIO;
+    long long DH_INICIO;
     int DAY_FIM;
     int MONTH_FIM;
     int YEAR_FIM;
     int HOUR_FIM;
     int MIN_FIM;    
-    long DH_FINAL;
+    long long DH_FINAL;
     int USUARIO_ID;
     int STATUS;  
     int AVALIACAO;

@@ -14,3 +14,4 @@
 
 FILE *arq;
 int session_usuarioID;
+int session_nivelAcesso;

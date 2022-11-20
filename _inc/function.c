@@ -1,4 +1,4 @@
-
+﻿
 #include "struct.c" //TODAS AS STRUCTS DO SISTEMA3
 #include "variables.c" //TODAS AS STRUCTS DO SISTEMA3
 
@@ -142,6 +142,12 @@ void BUSCAR_ID(char BANCO[],int *RETORNO){
                 ID = STRC_DEFAULT.ID;
                 ID++;
             }
+        } else if (strcmp(ARQ_AGENDAMENTO,BANCO) == 0){
+            STRC_AGENDAMENTO STRC_DEFAULT;
+            while(fread(&STRC_DEFAULT, sizeof(STRC_DEFAULT), 1, arq)==1) {
+                ID = STRC_DEFAULT.ID;
+                ID++;
+            }
         }
 
         *RETORNO = ID;
@@ -210,10 +216,11 @@ void PREPARA_ENTRADA_DATA(char buscar[],int *dt){
 
 }
 //PREPARA DH STRUCT LONG - SAIDA
-void PREPARA_DATA_STRC(long *retorno,int year, int month, int day, int hour, int min){
+void PREPARA_DATA_STRC(long long *retorno,int year, int month, int day, int hour, int min){
 
     //printf("\n\n%d | %d | %d | %d | %d", year,month,day,hour,min);
     char str_day[100],str_month[100],str_year[100],str_hour[100],str_min[100],resultado[100] = "";
+    char *eptr;
 
     if (year != ""){
         sprintf(str_year, "%04d", year);
@@ -236,9 +243,9 @@ void PREPARA_DATA_STRC(long *retorno,int year, int month, int day, int hour, int
         strcat(resultado,str_min);
     }
 
-
-    //printf("\nRETORNO LONG: %s \n\n", resultado);
-    *retorno = atol(resultado);
+    *retorno = strtoll(resultado, &eptr, 10);
+    //STRING PARA LONG LONG
+    //printf("\n\nCONVERSÃO: %lld", *retorno);
 
 }
 //PREPARA DATA ENTRADA USUÁRIO
@@ -262,7 +269,7 @@ void PREPARA_ENTRADA_HORA(char buscar[],int *hr){
 //=======================================================================================================
 //FUNCTIONS VALIDAÇÃO
 //=======================================================================================================
-void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
+void LOGIN_VALIDA_ACESSO(boolean *session){
 
     STRC_LOGIN LOGIN;
 
@@ -303,7 +310,7 @@ void LOGIN_VALIDA_ACESSO(boolean *session, int *session_nivelAcesso){
             //    break;
             //}
             session_usuarioID = LOGIN.ID;
-            *session_nivelAcesso = LOGIN.NIVEL;
+            session_nivelAcesso = LOGIN.NIVEL;
             *session = true;
             break;
         }
@@ -583,7 +590,7 @@ void MENU_AGENDAMENTOS(){
         printf("[%s1%s] - Solicitar\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s2%s] - Check-in\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s3%s] - Check-out\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s3%s] - Cancelamento\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s4%s] - Cancelamento\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
 
         printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
@@ -596,10 +603,10 @@ void MENU_AGENDAMENTOS(){
                 CADASTRA_AGENDAMENTO();
                 break;
             case 2:
-                //SUB_MENU_ESPACOS();
+                LISTRAR_AGENDAMENTOS(1);
                 break;
             case 3:
-                //ALTERAR_USUARIO(true);
+                LISTRAR_AGENDAMENTOS(99);
                 break;
             case 0:
                 MENU_PRINCIPAL_ADM();
@@ -1534,30 +1541,29 @@ void CADASTRA_AGENDAMENTO(){
         printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
 
         //ASSUNTO
-        SEPARADOR(); 
-        printf("\n\n%sInformações%s\n",COLOR_PURPLE,COLOR_RESET);
-        printf("\n%sAssunto:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ASSUNTO);
+        SEPARADOR();
+        printf("\n\n%s[Informações]%s",COLOR_PURPLE,COLOR_RESET);
+        printf("\n  %sAssunto:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ASSUNTO);
         FORMATA_DATA_HORA(&dt,AGENDAMENTO.YEAR_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.DAY_INICIO,AGENDAMENTO.HOUR_INICIO,AGENDAMENTO.MIN_INICIO);
-        printf("\n%sEntrada:%s %s",COLOR_CYAN,COLOR_RESET,dt);
+        printf("\n  %sEntrada:%s %s",COLOR_CYAN,COLOR_RESET,dt);
         FORMATA_DATA_HORA(&dt,AGENDAMENTO.YEAR_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.DAY_FIM,AGENDAMENTO.HOUR_FIM,AGENDAMENTO.MIN_FIM);
-        printf("\n%sSaída:%s %s\n\n",COLOR_CYAN,COLOR_RESET,dt);
-         //ASSUNTO
-        SEPARADOR(); 
-        printf("\n\n%sSolicitante%s\n",COLOR_PURPLE,COLOR_RESET); 
-        printf("\n%sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.ID);
-        printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.NOME_COMPLETO); 
-        printf("\n%sCelular:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.CELULAR); 
-        printf("\n%sE-mail:%s %s\n\n",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.USUARIO); 
+        printf("\n  %sSaída:%s %s\n\n",COLOR_CYAN,COLOR_RESET,dt);
+        //ASSUNTO
+        SEPARADOR();
+        printf("\n\n%s[Solicitante]%s",COLOR_PURPLE,COLOR_RESET);
+        printf("\n  %sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.ID);
+        printf("\n  %sNome:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.NOME_COMPLETO);
+        printf("\n  %sCelular:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.CELULAR);
+        printf("\n  %sE-mail:%s %s\n\n",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.USUARIO.USUARIO);
         //ESPAÇO
         SEPARADOR();
-        printf("\n\n%sEspaço%s\n",COLOR_PURPLE,COLOR_RESET);
-        printf("\n%sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.ID);
-        printf("\n%sNome:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.NOME_ESPACO);
-        printf("\n%sCapidade:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.CAPACIDADE);
-        printf("\n%sTipo:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.TP_ESPACO);
-        printf("\n%sObservação:%s %s\n\n",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.OBSERVACAO);
+        printf("\n\n%s[Espaço]%s",COLOR_PURPLE,COLOR_RESET);
+        printf("\n  %sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.ID);
+        printf("\n  %sNome:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.NOME_ESPACO);
+        printf("\n  %sCapidade:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.CAPACIDADE);
+        printf("\n  %sTipo:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.TP_ESPACO);
+        printf("\n  %sObservação:%s %s\n\n",COLOR_CYAN,COLOR_RESET,AGENDAMENTO.ESPACO.OBSERVACAO);
         SEPARADOR();
-
 
         do{
             printf("\n\n\nDeseja finalizar cadastro? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
@@ -1565,11 +1571,11 @@ void CADASTRA_AGENDAMENTO(){
         } while(confirm != 's' && confirm != 'n');
 
         if(confirm == 's'){
-            // BUSCAR_ID(ARQ_ESPACO,&ESPACO.ID);
-            // arq = fopen(ARQ_ESPACO,"a+b");
-            // fwrite(&ESPACO,sizeof(ESPACO),1,arq);
-            // fclose(arq);
-            // printf("\n\nEspaço criado com sucesso...");
+            BUSCAR_ID(ARQ_AGENDAMENTO,&AGENDAMENTO.ID);
+            arq = fopen(ARQ_AGENDAMENTO,"a+b");
+            fwrite(&AGENDAMENTO,sizeof(AGENDAMENTO),1,arq);
+            fclose(arq);
+            printf("\n\nEspaço criado com sucesso...");
         }
 
     } while(confirm != 's' && confirm != 'n');
@@ -1579,17 +1585,112 @@ void CADASTRA_AGENDAMENTO(){
     return 0;
 
 }
+void LISTRAR_AGENDAMENTOS(int STATUS_ID){
+    STRC_AGENDAMENTO AGENDAMENTO;
+    STRC_DH DH;
+    boolean fl_econtrou,fl_liberaLoop;
+    long long DH_ATUAL_LONG;
+    int count = 0, posicaoArq = 0;
+    char buscar[100];
+
+
+    do {
+        CABECALHO();
+        printf("%sMenu inicial > Agendamentos >%s %sCheck-in%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+
+        fl_liberaLoop == false;
+
+        //CRIA LONG DT ATUAL
+        DH_ATUAL(&DH);
+        PREPARA_DATA_STRC(&DH_ATUAL_LONG,atoi(DH.ANO),atoi(DH.MES),atoi(DH.DIA),atoi(DH.HORAS),atoi(DH.MINUTOS));
+
+        arq = fopen(ARQ_AGENDAMENTO,"rb");
+        if(arq!=NULL){
+            while(fread(&AGENDAMENTO, sizeof(AGENDAMENTO), 1, arq)){
+                fl_econtrou = false;
+
+                if((AGENDAMENTO.USUARIO_ID == session_usuarioID || session_nivelAcesso == 2) && AGENDAMENTO.STATUS == STATUS_ID){
+
+                    if(DH_ATUAL_LONG >= AGENDAMENTO.DH_INICIO && AGENDAMENTO.STATUS == 1){
+                        fl_econtrou = true;
+                        count++;
+                    }
+                }
+
+                if(STATUS_ID == 99) {
+                    count++;
+                    fl_econtrou = true;
+                }
+
+                if(fl_econtrou == true){
+
+                    if (count == 1) SEPARADOR();
+                   
+                    PRINTAR_AGENDAMENTO(&AGENDAMENTO,false);
+                    SEPARADOR();
+                }
+            }
+        }
+        fclose(arq);
+
+        if (count > 0) {
+            printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Digite o código da solicitação, %s0%s para voltar: ",COLOR_YELLOW,COLOR_RESET);
+            gets(buscar);
+
+            if (strcmp(buscar,"0") == 0) return 0;
+            else {
+
+                fl_econtrou = false;
+                 
+                arq = fopen(ARQ_AGENDAMENTO,"rb");
+                while(fread(&AGENDAMENTO, sizeof(AGENDAMENTO), 1, arq)){
+                    
+                    if(atoi(buscar) == AGENDAMENTO.ID){
+                        AGENDAMENTO.STATUS == 2;
+                        fl_econtrou == true;
+                        break;
+                    }
+                    
+                    posicaoArq = posicaoArq + sizeof(STRC_LOGIN);
+                    fseek(arq, posicaoArq, SEEK_SET);
+                }                
+                fclose(arq);
+                 
+                if (fl_econtrou == true){
+                //     arq = fopen(ARQ_ESPACO,"r+b");
+                //     fseek(arq, posicaoArq, SEEK_SET);  //DEFINE O DESLOCAMENTO PARA ONDE ENCONTROU OS DADOS;
+                //     fwrite(&ESPACO,sizeof(STRC_ESPACO),1,arq) == sizeof(STRC_ESPACO); //REESCREVE OS DADOS  NO ARQUIVO;
+                //     fclose(arq);
+                } else {
+                    printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                    printf("Código da solicitação não encontrado...\n\n");
+                    system("pause");
+                }
+            }
+
+        } else {
+            fl_liberaLoop == true;
+            printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Nenhum agendamento liberado para check-in...\n\n");
+            system("pause");
+        }
+
+    }while (fl_liberaLoop == false);
+
+
+}
 int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
     //FORMATA_DATA(AGENDAMENTO.DAY_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.YEAR_FIM);
 
-    STRC_AGENDAMENTO AGENDAMENTO; 
-    STRC_AGENDAMENTO AGENDAMENTO_AUX; 
+    STRC_AGENDAMENTO AGENDAMENTO;
+    STRC_AGENDAMENTO AGENDAMENTO_AUX;
     STRC_DH DH;
 
     boolean valida, validaAux;
     int i,confirm,dt_tratamento[3],hr[2],count;
     char buscar[100], STR_ID[100];
-    long DH_ATUAL_LONG;
+    long long DH_ATUAL_LONG;
 
     if (strcmp("ASSUNTO",campo) == 0){
         //NOME DO ESPAÇO
@@ -1709,23 +1810,23 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 if(strlen(buscar) == 0){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("A data inicial é obrigatória...\n\n");
+
+                } else if(strcmp(buscar,"0") == 0){
+                    return 0;
                 } else if(strlen(buscar) != 10){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("Data digitada inválida...\n\n");
                 } else {
-                    if(strcmp(buscar,"0") == 0) return 0;
-                    else {
-                        PREPARA_ENTRADA_DATA(buscar,&dt_tratamento);
-                        AGENDAMENTO.DAY_INICIO = dt_tratamento[0];
-                        AGENDAMENTO.MONTH_INICIO = dt_tratamento[1];
-                        AGENDAMENTO.YEAR_INICIO = dt_tratamento[2];
+                    PREPARA_ENTRADA_DATA(buscar,&dt_tratamento);
+                    AGENDAMENTO.DAY_INICIO = dt_tratamento[0];
+                    AGENDAMENTO.MONTH_INICIO = dt_tratamento[1];
+                    AGENDAMENTO.YEAR_INICIO = dt_tratamento[2];
 
-                        if (AGENDAMENTO.DAY_INICIO == 0 || AGENDAMENTO.MONTH_INICIO == 0 || AGENDAMENTO.YEAR_INICIO == 0){
-                            printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-                            printf("Data digitada inválida...\n\n");
-                        } else {
-                            valida = VALIDA_ENTRADA_DATA(AGENDAMENTO.DAY_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.YEAR_INICIO);
-                        }
+                    if (AGENDAMENTO.DAY_INICIO == 0 || AGENDAMENTO.MONTH_INICIO == 0 || AGENDAMENTO.YEAR_INICIO == 0){
+                        printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                        printf("Data digitada inválida...\n\n");
+                    } else {
+                        valida = VALIDA_ENTRADA_DATA(AGENDAMENTO.DAY_INICIO,AGENDAMENTO.MONTH_INICIO,AGENDAMENTO.YEAR_INICIO);
                     }
                 }
             }while(valida == false);
@@ -1744,13 +1845,13 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 if(strlen(buscar) == 0){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("A hora inicial é obrigatória...\n\n");
+                } else if(strcmp(buscar,"0") == 0){
+                    return 0;
                 } else if(strlen(buscar) != 5){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("Hora digitada inválida...\n\n");
                 } else {
-                    if(strcmp(buscar,"0") == 0){
-                        return 0;
-                    } else if (!VALIDA_MASCARA_HORA(buscar)){
+                    if (!VALIDA_MASCARA_HORA(buscar)){
                         printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                         printf("Hora digitada inválida...\n\n");
                     } else {
@@ -1777,24 +1878,24 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 if(strlen(buscar) == 0){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("A data final é obrigatória...\n\n");
+                } else if(strcmp(buscar,"0") == 0){
+                    return 0;
                 } else if(strlen(buscar) != 10){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("Data digitada inválida...\n\n");
                 } else {
-                    if(strcmp(buscar,"0") == 0) return 0;
-                    else {
-                        PREPARA_ENTRADA_DATA(buscar,&dt_tratamento);
-                        AGENDAMENTO.DAY_FIM = dt_tratamento[0];
-                        AGENDAMENTO.MONTH_FIM = dt_tratamento[1];
-                        AGENDAMENTO.YEAR_FIM = dt_tratamento[2];
+                    PREPARA_ENTRADA_DATA(buscar,&dt_tratamento);
+                    AGENDAMENTO.DAY_FIM = dt_tratamento[0];
+                    AGENDAMENTO.MONTH_FIM = dt_tratamento[1];
+                    AGENDAMENTO.YEAR_FIM = dt_tratamento[2];
 
-                        if (AGENDAMENTO.DAY_FIM == 0 || AGENDAMENTO.MONTH_FIM == 0 || AGENDAMENTO.YEAR_FIM == 0){
-                            printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-                            printf("Data digitada inválida...\n\n");
-                        } else {
-                            valida = VALIDA_ENTRADA_DATA(AGENDAMENTO.DAY_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.YEAR_FIM);
-                        }
+                    if (AGENDAMENTO.DAY_FIM == 0 || AGENDAMENTO.MONTH_FIM == 0 || AGENDAMENTO.YEAR_FIM == 0){
+                        printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                        printf("Data digitada inválida...\n\n");
+                    } else {
+                        valida = VALIDA_ENTRADA_DATA(AGENDAMENTO.DAY_FIM,AGENDAMENTO.MONTH_FIM,AGENDAMENTO.YEAR_FIM);
                     }
+
                 }
             }while(valida == false);
 
@@ -1812,13 +1913,13 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 if(strlen(buscar) == 0){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("A hora final é obrigatória...\n\n");
+                } else if(strcmp(buscar,"0") == 0){
+                    return 0;
                 } else if(strlen(buscar) != 5){
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("Hora digitada inválida...\n\n");
                 } else {
-                    if(strcmp(buscar,"0") == 0){
-                        return 0;
-                    } else if (!VALIDA_MASCARA_HORA(buscar)){
+                    if (!VALIDA_MASCARA_HORA(buscar)){
                         printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                         printf("Hora digitada inválida...\n\n");
                     } else {
@@ -1849,31 +1950,50 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 printf("Data final não pode ser menor que a inicial...\n\n");
             } else {
 
+                valida = true;
 
-                arq = fopen(ARQ_AGENDAMENTO,"rb"); 
-                if(arq==NULL){
-                    valida = true;
-                } else {
-                    
+
+                //VALIDA DEMAIS AGENDAMENTOS
+                arq = fopen(ARQ_AGENDAMENTO,"rb");
+                if(arq!=NULL){
                     while(fread(&AGENDAMENTO_AUX, sizeof(AGENDAMENTO_AUX), 1, arq)){
-                        if(session_usuarioID == AGENDAMENTO.USUARIO.ID &&  AGENDAMENTO.USUARIO.STATUS == 1){
-                            valida = true;
-                            break;                        
-                        } 
+
+                        if(STRC_RETORNO->ESPACO_ID == AGENDAMENTO_AUX.ESPACO_ID && (AGENDAMENTO_AUX.STATUS == 1 || AGENDAMENTO_AUX.STATUS == 2)){
+                            //PRIMEIRO VALIDA SE A DT_INCIAL E FINAL ESTÁ DENTRO DE ALGUM PERÍODO
+                            if(AGENDAMENTO.DH_INICIO >= AGENDAMENTO_AUX.DH_INICIO && AGENDAMENTO.DH_INICIO <= AGENDAMENTO_AUX.DH_FINAL){
+                                valida = false;
+                                break;
+                            }
+                            if( AGENDAMENTO.DH_FINAL >= AGENDAMENTO_AUX.DH_INICIO && AGENDAMENTO.DH_FINAL <= AGENDAMENTO_AUX.DH_FINAL){
+                                valida = false;
+                                break;
+                            }
+                            //SEGUNDO VALIDA SE EXISTE ALGUMA SOLICITAÇÃO EM ABERTA DENTRO DA DATA INFORMADA
+                            if(AGENDAMENTO_AUX.DH_INICIO >= AGENDAMENTO.DH_INICIO && AGENDAMENTO_AUX.DH_INICIO <= AGENDAMENTO.DH_FINAL){
+                                valida = false;
+                                break;
+                            }
+                            if( AGENDAMENTO_AUX.DH_FINAL >= AGENDAMENTO.DH_INICIO && AGENDAMENTO_AUX.DH_FINAL <= AGENDAMENTO.DH_FINAL){
+                                valida = false;
+                                break;
+                            }
+
+                        }
+
                     }
                 }
                 fclose(arq);
 
-                if(valida == true){ 
+                if(valida == true){
 
                     valida = false;
 
-                    arq = fopen(ARQ_LOGIN,"rb"); 
+                    arq = fopen(ARQ_LOGIN,"rb");
                     while(fread(&AGENDAMENTO.USUARIO, sizeof(AGENDAMENTO.USUARIO), 1, arq)){
                         if(session_usuarioID == AGENDAMENTO.USUARIO.ID &&  AGENDAMENTO.USUARIO.STATUS == 1){
                             valida = true;
-                            break;                        
-                        } 
+                            break;
+                        }
                     }
                     fclose(arq);
 
@@ -1895,6 +2015,8 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                         STRC_RETORNO->USUARIO = AGENDAMENTO.USUARIO;
                         STRC_RETORNO->USUARIO_ID = AGENDAMENTO.USUARIO.ID;
 
+                        STRC_RETORNO->STATUS = 1;
+
                     } else {
 
                         printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
@@ -1903,18 +2025,66 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                         exit(1);
                     }
                 } else {
+                    printf("\n\n");
+                    SEPARADOR();
+                    PRINTAR_AGENDAMENTO(&AGENDAMENTO_AUX,true);
+                    SEPARADOR();
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("Já existe um agendamento no período selecionado...\n\n");
-                    system("pause");
                 }
 
- 
+
             }
 
         } while(valida == false);
-
-
-
     }
     return 1;
+}
+void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspaco){
+
+    char dt[100];
+
+    printf("\n%s#Código da solicitação:%s %d\n",COLOR_PURPLE,COLOR_RESET,AGENDAMENTO->ID);
+    SEPARADOR();
+
+    //ASSUNTO
+    printf("\n\n%s[Informações]%s",COLOR_PURPLE,COLOR_RESET);
+    printf("\n      %sAssunto:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ASSUNTO);
+    FORMATA_DATA_HORA(&dt,AGENDAMENTO->YEAR_INICIO,AGENDAMENTO->MONTH_INICIO,AGENDAMENTO->DAY_INICIO,AGENDAMENTO->HOUR_INICIO,AGENDAMENTO->MIN_INICIO);
+    printf("\n      %sEntrada:%s %s",COLOR_CYAN,COLOR_RESET,dt);
+    FORMATA_DATA_HORA(&dt,AGENDAMENTO->YEAR_FIM,AGENDAMENTO->MONTH_FIM,AGENDAMENTO->DAY_FIM,AGENDAMENTO->HOUR_FIM,AGENDAMENTO->MIN_FIM);
+    printf("\n      %sSaída:%s %s",COLOR_CYAN,COLOR_RESET,dt);
+    printf("\n      %sStatus:%s ",COLOR_CYAN,COLOR_RESET);
+
+    //>STATUS
+    //>0: CANCELADO
+    //>1: AGENDADO
+    //>2: EM ANDAMENTO
+    //>3: FINALIZADO
+    if (AGENDAMENTO->STATUS == 0)
+        printf("%s%s%s",COLOR_RED,"Cancelado",COLOR_RESET);
+    else if (AGENDAMENTO->STATUS == 1)
+        printf("%s%s%s",COLOR_YELLOW,"Agendado",COLOR_RESET);
+    else if (AGENDAMENTO->STATUS == 2)
+        printf("%s%s%s",COLOR_GREEN,"Em Andamento",COLOR_RESET);
+    else if (AGENDAMENTO->STATUS == 3)
+        printf("%s%s%s",COLOR_BLUE,"Finalizado",COLOR_RESET);
+
+    //ASSUNTO
+    printf("\n\n%s[Solicitante]%s",COLOR_PURPLE,COLOR_RESET);
+    printf("\n      %sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->USUARIO.ID);
+    printf("\n      %sNome:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->USUARIO.NOME_COMPLETO);
+    printf("\n      %sCelular:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->USUARIO.CELULAR);
+    printf("\n      %sE-mail:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->USUARIO.USUARIO);
+    //ESPAÇO
+    if(fl_esconderEspaco != true){
+        printf("\n\n%s[Espaço]%s",COLOR_PURPLE,COLOR_RESET);
+        printf("\n      %sCódigo:%s %d",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ESPACO.ID);
+        printf("\n      %sNome:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ESPACO.NOME_ESPACO);
+        printf("\n      %sCapidade:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ESPACO.CAPACIDADE);
+        printf("\n      %sTipo:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ESPACO.TP_ESPACO);
+        printf("\n      %sObservação:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ESPACO.OBSERVACAO);
+    }
+
+    printf("\n\n");
 }
