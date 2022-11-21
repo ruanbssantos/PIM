@@ -42,9 +42,7 @@ int main(){
 
     // }while (session == 0);
 
-    if (session_nivelAcesso == 2 || session_nivelAcesso == 1){ 
-        MENU_PRINCIPAL_ADM(); 
-    }
+    MENU_PRINCIPAL();  
 
     SetConsoleOutputCP(CPAGE_DEFAULT);
     return 0;

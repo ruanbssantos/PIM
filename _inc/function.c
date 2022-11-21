@@ -448,54 +448,87 @@ int VALIDA_MASCARA_HORA(char buscar[]){
 //=======================================================================================================
 //MENUS
 //=======================================================================================================
-void MENU_PRINCIPAL_ADM(){
+void MENU_PRINCIPAL(){
     int op;
+
     do{
         CABECALHO();
         printf("%sMenu inicial%s\n\n",COLOR_GREEN,COLOR_RESET);
-        printf("[%s1%s] - Colaboradores\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s2%s] - Espaços\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s4%s] - Relatórios\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s5%s] - Alterar senha\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s0%s] - Sair",COLOR_YELLOW,COLOR_RESET);
 
-        printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-        printf("Escolha uma opção acima: ");
-        op = VALIDA_ENTRADA_NUMERO();
+        if (session_nivelAcesso == 2){
+            printf("[%s1%s] - Colaboradores\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s2%s] - Espaços\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s3%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s4%s] - Relatórios\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s5%s] - Alterar senha\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s0%s] - Sair",COLOR_YELLOW,COLOR_RESET);
 
-        switch(op)
-        {
-            case 1:
-                MENU_USUARIOS();
-                break;
-            case 2:
-                MENU_ESPACOS();
-                break;
-            case 3:
-                MENU_AGENDAMENTOS();
-                break;
-            case 4:
-                printf("Em CONSTRUÇÃO...");
-                system("pause >nul");
-                break;
-            case 5:
-                ALTERAR_SENHA();
-                break;
-            case 0:
-                EXIT();
-                break;
-            default:
-                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
-                printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
-                system("pause");
-                break;
+            printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Escolha uma opção acima: ");
+            op = VALIDA_ENTRADA_NUMERO();
+
+            switch(op)
+            {
+                case 1:
+                    MENU_USUARIOS();
+                    break;
+                case 2:
+                    MENU_ESPACOS();
+                    break;
+                case 3:
+                    MENU_AGENDAMENTOS();
+                    break;
+                case 4:
+                    printf("Em CONSTRUÇÃO...");
+                    system("pause >nul");
+                    break;
+                case 5:
+                    ALTERAR_SENHA();
+                    break;
+                case 0:
+                    EXIT();
+                    break;
+                default:
+                    printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                    system("pause");
+                    break;
+            }
+
+        } else {
+
+            printf("[%s1%s] - Agendamentos\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s2%s] - Alterar senha\n",COLOR_YELLOW,COLOR_RESET);
+            printf("[%s0%s] - Sair",COLOR_YELLOW,COLOR_RESET);
+
+            printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Escolha uma opção acima: ");
+            op = VALIDA_ENTRADA_NUMERO();
+
+            switch(op)
+            {
+                case 1:
+                    MENU_AGENDAMENTOS();
+                    break;
+                case 2:
+                    ALTERAR_SENHA();
+                    break;
+                case 0:
+                    EXIT();
+                    break;
+                default:
+                    printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                    system("pause");
+                    break;
+            }
         }
-
+                
     }while(op!=0);
 
     return;
 }
+
 void MENU_USUARIOS(){
     int op;
     boolean cadastroFinalizado;
@@ -524,7 +557,7 @@ void MENU_USUARIOS(){
                 ALTERAR_USUARIO(true);
                 break;
             case 0:
-                MENU_PRINCIPAL_ADM();
+                MENU_PRINCIPAL();
                 break;
             default:
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
@@ -564,7 +597,7 @@ void MENU_ESPACOS(){
                 ALTERAR_ESPACO(true);
                 break;
             case 0:
-                MENU_PRINCIPAL_ADM();
+                MENU_PRINCIPAL();
                 break;
             default:
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
@@ -611,7 +644,7 @@ void MENU_AGENDAMENTOS(){
                 LISTAR_AGENDAMENTOS(5,NULL,NULL);
                 break;
             case 0:
-                MENU_PRINCIPAL_ADM();
+                MENU_PRINCIPAL();
                 break;
             default:
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
@@ -2275,7 +2308,7 @@ void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspac
         else strcpy(avaliacao,"");
 
         printf("\n\n%s[Avaliação]%s",COLOR_PURPLE,COLOR_RESET);
-        printf("\n      %sAvaliação:%s %s",COLOR_CYAN,COLOR_RESET,avaliacao);
+        printf("\n      %sAvaliação:%s %d - %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->AVALIACAO,avaliacao);
         printf("\n      %sComentário:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->OBSERVACAO);
     }
 
