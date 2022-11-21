@@ -63,7 +63,7 @@ typedef struct {
     int USUARIO_ID;
     int STATUS;  
     int AVALIACAO;
-    char FEEDBACK[100];
+    char OBSERVACAO[100];
     
     STRC_LOGIN USUARIO;
     STRC_ESPACO ESPACO;

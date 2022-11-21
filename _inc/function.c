@@ -266,7 +266,6 @@ void PREPARA_ENTRADA_HORA(char buscar[],int *hr){
     }
 
 }
-
 //=======================================================================================================
 //FUNCTIONS VALIDAÇÃO
 //=======================================================================================================
@@ -481,12 +480,7 @@ void MENU_PRINCIPAL_ADM(){
                 system("pause >nul");
                 break;
             case 5:
-                printf("Em CONSTRUÇÃO...");
-                system("pause >nul");
-                break;
-            case 6:
-                printf("Em CONSTRUÇÃO...");
-                system("pause >nul");
+                ALTERAR_SENHA();
                 break;
             case 0:
                 EXIT();
@@ -708,7 +702,6 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
 
     STRC_LOGIN LOGIN;
 
-    int i = 0;
     char confirm;
 
     if(fl_primeiroAcesso == true){
@@ -723,66 +716,8 @@ void CADASTRA_USUARIO(boolean fl_primeiroAcesso, boolean *cadastroFinalizado){
     //EMAIL
     if (VALIDA_DADOS_USUARIO("EMAIL",&LOGIN) == false) return 0;
 
-    //SENHA
-    char senha[100]="", confirmaSenha[100]="", caracter;
-    boolean validaSenha = false;
-    do{
-        i = 0;
-        printf("\nDigite a senha: ");
-        do{
-            caracter=getch();
-            if(caracter!=13){
-                if(isprint(caracter)){
-                    senha[i]=caracter;
-                    i++;
-                    printf("*");
-                }else if(caracter==8&&i){
-                    senha[i]='\0';
-                    i--;
-                    printf("\b \b");
-                }
-            }
-
-        }while(caracter!=13);
-
-        if(strlen(senha) == 0){
-            printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-            printf("A senha é obrigatória...\n\n");
-        } else {
-            if(strcmp(senha,"0") == 0) return 0;
-
-            i = 0;
-            printf("\n\nConfirme a senha: ");
-            do{
-                caracter=getch();
-                if(caracter!=13){
-                    if(isprint(caracter)){
-                        confirmaSenha[i]=caracter;
-                        i++;
-                        printf("*");
-                    }else if(caracter==8&&i){
-                        confirmaSenha[i]='\0';
-                        i--;
-                        printf("\b \b");
-                    }
-                }
-
-            }while(caracter!=13);
-            if(strcmp(confirmaSenha,"0") == 0) return 0;
-
-            if(strcmp(senha,confirmaSenha) != 0 ){
-                printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-                printf("As senhas são diferentes...\n\n");
-                //LIMPAR ARRAY
-                memset(senha, 0, 100);
-                memset(confirmaSenha, 0, 100);
-            } else {
-                validaSenha = true;
-            }
-        }
-
-    }while(validaSenha == false);
-    strcpy(LOGIN.SENHA,senha);
+    //EMAIL
+    if (VALIDA_DADOS_USUARIO("SENHA",&LOGIN) == false) return 0;
 
     //NOME COMPLETO
     if (VALIDA_DADOS_USUARIO("NOMECOMPLETO",&LOGIN) == false) return 0;
@@ -848,6 +783,8 @@ void LISTAR_USUARIOS(int op){
         count_usuario = 0;
         CABECALHO();
         printf("%sMenu inicial > Colaboradores >%s %sPesquisar - %s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipoPesquisa,COLOR_RESET);
+        MSG_RETORNO();
+
         arq = fopen(ARQ_LOGIN,"rb");
 
         if(op != 3){
@@ -910,6 +847,7 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     if(fl_criaCabecalho == 1){
         CABECALHO();
         printf("%sMenu inicial > Colaboradores >%s %sAlterar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        MSG_RETORNO();
     } else {
         printf("\n\n");
     }
@@ -922,7 +860,6 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
 
     while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
         if(strcmp(buscar,LOGIN.USUARIO) == 0){
-            fclose(arq);
             count_usuario++;
             do{
                 validaAlteracao = false;
@@ -1145,6 +1082,68 @@ int VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
             }
         }while(validaStatus == false);
         STRC_RETORNO->STATUS = LOGIN.STATUS;
+
+    } else if(strcmp("SENHA",campo) == 0){
+        //SENHA
+        char senha[100]="", confirmaSenha[100]="", caracter;
+        boolean validaSenha = false;
+        do{
+            i = 0;
+            printf("\nDigite a senha: ");
+            do{
+                caracter=getch();
+                if(caracter!=13){
+                    if(isprint(caracter)){
+                        senha[i]=caracter;
+                        i++;
+                        printf("*");
+                    }else if(caracter==8&&i){
+                        senha[i]='\0';
+                        i--;
+                        printf("\b \b");
+                    }
+                }
+
+            }while(caracter!=13);
+
+            if(strlen(senha) == 0){
+                printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("A senha é obrigatória...\n\n");
+            } else {
+                if(strcmp(senha,"0") == 0) return 0;
+
+                i = 0;
+                printf("\n\nConfirme a senha: ");
+                do{
+                    caracter=getch();
+                    if(caracter!=13){
+                        if(isprint(caracter)){
+                            confirmaSenha[i]=caracter;
+                            i++;
+                            printf("*");
+                        }else if(caracter==8&&i){
+                            confirmaSenha[i]='\0';
+                            i--;
+                            printf("\b \b");
+                        }
+                    }
+
+                }while(caracter!=13);
+                if(strcmp(confirmaSenha,"0") == 0) return 0;
+
+                if(strcmp(senha,confirmaSenha) != 0 ){
+                    printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                    printf("As senhas são diferentes...\n\n");
+                    //LIMPAR ARRAY
+                    memset(senha, 0, 100);
+                    memset(confirmaSenha, 0, 100);
+                } else {
+                    validaSenha = true;
+                }
+            }
+
+        }while(validaSenha == false);
+        strcpy(STRC_RETORNO->SENHA,senha);
     }
     return 1;
 }
@@ -1154,9 +1153,61 @@ void PRINTAR_USUARIO(STRC_LOGIN *USER){
     printf("\n%sEmail:%s %s",COLOR_CYAN,COLOR_RESET,USER->USUARIO);
     printf("\n%sCelular:%s %s",COLOR_CYAN,COLOR_RESET,USER->CELULAR);
     printf("\n%sNível:%s %s",COLOR_CYAN,COLOR_RESET,USER->NIVEL==1?"Comum":"Administrativo");
+    //printf("\n%sSenha:%s %s",COLOR_CYAN,COLOR_RESET,USER->SENHA);
     printf("\n%sStatus:%s %s%s%s\n\n",COLOR_CYAN,COLOR_RESET,USER->STATUS==1?COLOR_GREEN:COLOR_RED,USER->STATUS==1?"Ativo":"Inativo",COLOR_RESET);
     SEPARADOR();
     printf("\n");
+}
+void ALTERAR_SENHA(){
+
+    STRC_LOGIN LOGIN;
+    int count_usuario = 0,posicaoArq = 0;
+    boolean validaAlteracao = false;
+    char confirm;
+
+    CABECALHO();
+    printf("%sMenu inicial > Colaboradores >%s %sAlterar senha%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+    MSG_RETORNO();
+
+    arq = fopen(ARQ_LOGIN,"rb");
+    while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
+        if(session_usuarioID == LOGIN.ID){
+            count_usuario++;
+            if (VALIDA_DADOS_USUARIO("SENHA",&LOGIN) == true) validaAlteracao = true;
+            else return 0;
+
+            do{
+                printf("\n\n\nDeseja realmente alterar? %s[S/N]%s: ",COLOR_YELLOW,COLOR_RESET);
+                confirm = tolower(getche());
+            } while(confirm != 's' && confirm != 'n');
+
+            if (validaAlteracao == true && confirm == 's') {
+                arq = fopen(ARQ_LOGIN,"r+b");
+                fseek(arq, posicaoArq, SEEK_SET);  //DEFINE O DESLOCAMENTO PARA ONDE ENCONTROU OS DADOS;
+                fwrite(&LOGIN,sizeof(STRC_LOGIN),1,arq) == sizeof(STRC_LOGIN); //REESCREVE OS DADOS  NO ARQUIVO;
+                fclose(arq);
+            } else {
+                validaAlteracao = false;
+            }
+
+            break;
+        }
+        posicaoArq = posicaoArq + sizeof(STRC_LOGIN);
+        fseek(arq, posicaoArq, SEEK_SET);
+    }
+    fclose(arq);
+
+    if (count_usuario == 0){
+        printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+        printf("Houve um erro inesperado, por favor tente novamente mais tarde...\n\n");
+        system("pause");
+        exit(1);
+    } else if (validaAlteracao == true){
+        printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Alteração realizada com sucesso...\n\n");
+        system("pause");
+    }
+
 }
 //=======================================================================================================
 //ESPAÇO
@@ -1165,6 +1216,7 @@ void CADASTRA_ESPACO(){
 
     CABECALHO();
     printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+    MSG_RETORNO();
 
     STRC_ESPACO ESPACO;
     char confirm;
@@ -1189,6 +1241,7 @@ void CADASTRA_ESPACO(){
     do{
         CABECALHO();
         printf("%sMenu inicial > Espaços >%s %sCadastro%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        MSG_RETORNO();
 
         printf("\n%sNome do espaço:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO.NOME_ESPACO);
         printf("\n\n%sCapidade:%s %s",COLOR_CYAN,COLOR_RESET,ESPACO.CAPACIDADE);
@@ -1230,8 +1283,9 @@ void LISTAR_ESPACO(int op){
         count = 0;
         CABECALHO();
         printf("%sMenu inicial > Espaços >%s %sPesquisar - %s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipoPesquisa,COLOR_RESET);
-        arq = fopen(ARQ_ESPACO,"rb");
+        MSG_RETORNO();
 
+        arq = fopen(ARQ_ESPACO,"rb");
 
         if(op != 3){
             printf("\nDigite o %s: ", op==1?"nome":"tipo");
@@ -1293,6 +1347,7 @@ void ALTERAR_ESPACO(boolean fl_criaCabecalho){
     if(fl_criaCabecalho == 1){
         CABECALHO();
         printf("%sMenu inicial > Espaços >%s %sAlterar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        MSG_RETORNO();
     } else {
         printf("\n\n");
     }
@@ -1321,7 +1376,7 @@ void ALTERAR_ESPACO(boolean fl_criaCabecalho){
                 printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
                 printf("Escolha o filtro desejado: ");
                 op = VALIDA_ENTRADA_NUMERO();
-
+                
                 switch(op)
                 {
                     case 1:
@@ -1518,12 +1573,11 @@ void CADASTRA_AGENDAMENTO(){
 
     CABECALHO();
     printf("%sMenu inicial > Agendamentos >%s %sSolicitar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+    MSG_RETORNO();
 
     STRC_AGENDAMENTO AGENDAMENTO;
     char confirm;
     char dt[100];
-
-    MSG_RETORNO();
 
     //SELECIONA ASSUNTO
     if (VALIDA_DADOS_AGENDAMENTO("ASSUNTO",&AGENDAMENTO) == false) return 0;
@@ -1586,9 +1640,9 @@ void CADASTRA_AGENDAMENTO(){
 void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
     STRC_AGENDAMENTO AGENDAMENTO;
     STRC_DH DH;
-    boolean fl_econtrou,fl_liberaLoop;
+    boolean fl_econtrou,fl_liberaLoop, validacao;
     long long DH_ATUAL_LONG;
-    int count = 0, posicaoArq = 0;
+    int count = 0, posicaoArq = 0,avaliacao;
     char buscar[100],confirm;
     char tipo[100];
 
@@ -1596,15 +1650,17 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
         strcpy(tipo,"Check-in");
     else if (op == 3)
         strcpy(tipo,"Check-out");
-    else if (op == 4)
+    else if (op == 4){
+        STATUS_NOVO_ID = 0;
         strcpy(tipo,"Cancelamento");
-    else if (op ==5)
+    }        
+    else if (op == 5)
         strcpy(tipo,"Histórico");
 
     do {
         CABECALHO();
         printf("%sMenu inicial > Agendamentos >%s %s%s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipo,COLOR_RESET);
-
+   
         posicaoArq = 0;
         fl_liberaLoop = false;
 
@@ -1613,6 +1669,7 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
         PREPARA_DATA_STRC(&DH_ATUAL_LONG,atoi(DH.ANO),atoi(DH.MES),atoi(DH.DIA),atoi(DH.HORAS),atoi(DH.MINUTOS));
 
 
+        //SELECIONA QUAL AGENDAMENTO
         arq = fopen(ARQ_AGENDAMENTO,"rb");
         if(arq!=NULL){
             while(fread(&AGENDAMENTO, sizeof(AGENDAMENTO), 1, arq)){
@@ -1641,13 +1698,14 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
 
                 if(fl_econtrou == true){
                     if (count == 1) SEPARADOR();
-                    PRINTAR_AGENDAMENTO(&AGENDAMENTO,false);
+                    PRINTAR_AGENDAMENTO(&AGENDAMENTO,false,(op == 5?true:false),(op == 5?true:false));
                     SEPARADOR();
                 }
             }
         }
         fclose(arq);
 
+        //CASO SEJA DIFERENTE DE HISTÓRICO MONTA PARA CONFIRMAÇÃO
         if (count > 0 && op != 5) {
             printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
             printf("Digite o código da solicitação, %s0%s para voltar: ",COLOR_YELLOW,COLOR_RESET);
@@ -1690,13 +1748,81 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
                 if (fl_econtrou == true){
                     CABECALHO();
                     printf("%sMenu inicial > Agendamentos >%s %s%s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipo,COLOR_RESET);
+                    
+                    if(op == 3 || op == 4) MSG_RETORNO();
+
                     SEPARADOR();
-                    PRINTAR_AGENDAMENTO(&AGENDAMENTO,false);
+                    PRINTAR_AGENDAMENTO(&AGENDAMENTO,false,true,true);
                     SEPARADOR();
+
+                    //AVALIAÇÃO
+                    if (op == 3){
+
+                        do{
+                            validacao = false;
+
+                            printf("\n\n[%s1%s] - Péssimo",COLOR_YELLOW,COLOR_RESET);
+                            printf("\n[%s2%s] - Ruim",COLOR_YELLOW,COLOR_RESET);
+                            printf("\n[%s3%s] - Razóavel",COLOR_YELLOW,COLOR_RESET);
+                            printf("\n[%s4%s] - Bom",COLOR_YELLOW,COLOR_RESET);
+                            printf("\n[%s5%s] - Ótimo",COLOR_YELLOW,COLOR_RESET);
+                            printf("\n[%s6%s] - Não quero avaliar",COLOR_YELLOW,COLOR_RESET);
+                            printf("\n[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
+
+                            printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                            printf("Escolha uma opção acima, para avaliação: ");
+                            avaliacao = VALIDA_ENTRADA_NUMERO();
+
+                            switch(avaliacao)
+                            {
+                                case 1: case 2: case 3: case 4: case 5:
+                                    validacao = true;
+                                    AGENDAMENTO.AVALIACAO = avaliacao;
+                                    break;
+                                case 6:
+                                    AGENDAMENTO.AVALIACAO = 0;
+                                    validacao = true;
+                                    break;
+                                case 0:
+                                    return 0;
+                                    break;
+                                default:
+                                    printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                                    printf("Opção não reconhecida. Selecione uma opção correta acima...\n");
+                                    system("pause");
+                                    break;
+                            }
+
+                        } while(validacao == false);
+                               
+                        printf("\n\nDeixe um comentário: ");
+                        gets(AGENDAMENTO.OBSERVACAO);
+
+                        if(strcmp(AGENDAMENTO.OBSERVACAO,"0") == 0) return 0;
+                    
+                    //
+                    } else if (op == 4) {
+
+                        do{
+                            validacao = false;
+                            printf("\n\nDigite o motivo do cancelamento: ");
+                            gets(AGENDAMENTO.OBSERVACAO);
+
+                            if(strcmp(AGENDAMENTO.OBSERVACAO,"0") == 0) return 0;
+                            else if(strlen(AGENDAMENTO.OBSERVACAO) == 0) {
+                                printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                                printf("Motivo do cancelamento é obrigatório...\n");
+                            } else {
+                                validacao = true;
+                            }
+                        } while (validacao == false);
+
+                    }
+
 
                     do{
                         printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-                        printf("Deseja realmente realizar %s? %s[S/N]%s: ",strlwr(tipo),COLOR_YELLOW,COLOR_RESET);
+                        printf("Deseja realmente realizar o %s? %s[S/N]%s: ",strlwr(tipo),COLOR_YELLOW,COLOR_RESET);
                         confirm = tolower(getche());
                     } while(confirm != 's' && confirm != 'n');
 
@@ -1723,9 +1849,9 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
 
         } else {
             fl_liberaLoop = true;
-            if (!strcmp(tipo,"Histórico") == 0){ 
+            if (!strcmp(tipo,"Histórico") == 0){
                 printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-                printf("Nenhum agendamento liberado para %s...\n",strlwr(tipo)); 
+                printf("Nenhum agendamento liberado para %s...\n",strlwr(tipo));
             }
             printf("\n");
             system("pause");
@@ -1790,7 +1916,7 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 } else {
                     fclose(arq);
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-                    printf("Nenhum espaço cadastrado, contate o administrador do sistemaa...\n\n");
+                    printf("Nenhum espaço cadastrado, contate o administrador do sistema...\n\n");
                 }
                 fclose(arq);
             } else if(strlen(buscar) > 90){
@@ -2080,7 +2206,7 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
                 } else {
                     printf("\n\n");
                     SEPARADOR();
-                    PRINTAR_AGENDAMENTO(&AGENDAMENTO_AUX,true);
+                    PRINTAR_AGENDAMENTO(&AGENDAMENTO_AUX,true,false,false);
                     SEPARADOR();
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                     printf("Já existe um agendamento no período selecionado...\n\n");
@@ -2093,9 +2219,9 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
     }
     return 1;
 }
-void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspaco){
+void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspaco, boolean fl_mostrarAvaliacao, boolean  fl_mostrarCancelamento){
 
-    char dt[100];
+    char dt[100],avaliacao[100];
 
     printf("\n%s#Código da solicitação:%s %d\n",COLOR_PURPLE,COLOR_RESET,AGENDAMENTO->ID);
     SEPARADOR();
@@ -2137,6 +2263,25 @@ void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspac
         printf("\n      %sCapidade:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ESPACO.CAPACIDADE);
         printf("\n      %sTipo:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ESPACO.TP_ESPACO);
         printf("\n      %sObservação:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->ESPACO.OBSERVACAO);
+    }
+
+    if((session_nivelAcesso == 2 || AGENDAMENTO->USUARIO_ID == session_usuarioID) && AGENDAMENTO->STATUS == 3 && fl_mostrarAvaliacao == true){
+        
+        if (AGENDAMENTO->AVALIACAO == 1) strcpy(avaliacao,"Péssimo");
+        else if (AGENDAMENTO->AVALIACAO == 2) strcpy(avaliacao,"Ruim");
+        else if (AGENDAMENTO->AVALIACAO == 3) strcpy(avaliacao,"Razóavel");
+        else if (AGENDAMENTO->AVALIACAO == 4) strcpy(avaliacao,"Bom");
+        else if (AGENDAMENTO->AVALIACAO == 5) strcpy(avaliacao,"Ótimo");
+        else strcpy(avaliacao,"");
+
+        printf("\n\n%s[Avaliação]%s",COLOR_PURPLE,COLOR_RESET);
+        printf("\n      %sAvaliação:%s %s",COLOR_CYAN,COLOR_RESET,avaliacao);
+        printf("\n      %sComentário:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->OBSERVACAO);
+    }
+
+    if((session_nivelAcesso == 2 || AGENDAMENTO->USUARIO_ID == session_usuarioID)  && AGENDAMENTO->STATUS == 0 && fl_mostrarCancelamento == true){
+        printf("\n\n%s[Cancelamento]%s",COLOR_PURPLE,COLOR_RESET);
+        printf("\n      %sMotivo:%s %s",COLOR_CYAN,COLOR_RESET,AGENDAMENTO->OBSERVACAO);
     }
 
     printf("\n\n");

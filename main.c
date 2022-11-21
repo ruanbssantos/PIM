@@ -9,9 +9,10 @@ int main(){
 
     SetConsoleOutputCP(CPAGE_UTF8);
 
-    //boolean session = false;
+    system("title KING'S OFFICE CORPORATION (C).");
 
-    boolean session = true;
+    boolean session = false;
+ 
     session_nivelAcesso = 2;
     session_usuarioID = 1;
 
@@ -41,10 +42,8 @@ int main(){
 
     // }while (session == 0);
 
-    if (session_nivelAcesso == 2){
-
-        MENU_PRINCIPAL_ADM();
-        //CADASTRA_AGENDAMENTO();
+    if (session_nivelAcesso == 2 || session_nivelAcesso == 1){ 
+        MENU_PRINCIPAL_ADM(); 
     }
 
     SetConsoleOutputCP(CPAGE_DEFAULT);
