@@ -479,8 +479,7 @@ void MENU_PRINCIPAL(){
                     MENU_AGENDAMENTOS();
                     break;
                 case 4:
-                    printf("Em CONSTRUÇÃO...");
-                    system("pause >nul");
+                    MENU_RELATORIOS();
                     break;
                 case 5:
                     ALTERAR_SENHA();
@@ -523,12 +522,11 @@ void MENU_PRINCIPAL(){
                     break;
             }
         }
-                
+
     }while(op!=0);
 
     return;
 }
-
 void MENU_USUARIOS(){
     int op;
     boolean cadastroFinalizado;
@@ -657,6 +655,40 @@ void MENU_AGENDAMENTOS(){
 
     return;
 }
+void MENU_RELATORIOS(){
+    int op;
+    do{
+        CABECALHO();
+        printf("%sMenu inicial >%s %sRelatórios%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        printf("[%s1%s] - Detalhado\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Raking espaço\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
+
+        printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Escolha o filtro desejado: ");
+        op = VALIDA_ENTRADA_NUMERO();
+
+        switch(op)
+        {
+            case 1:
+                SUB_MENU_RELATORIOS();
+                break;
+            case 2:
+                CABECALHO();
+                break;
+            case 0:
+                MENU_PRINCIPAL();
+                break;
+            default:
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                system("pause");
+                break;
+        }
+
+    }while(op!=0);
+    return 0;
+}
 //=======================================================================================================
 //SUB-MENUS
 //=======================================================================================================
@@ -713,6 +745,43 @@ void SUB_MENU_ESPACOS(){
                 break;
             case 0:
                 MENU_ESPACOS();
+                break;
+            default:
+                printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
+                printf("Opção não reconhecida. Selecione uma opção correta acima...\n\n");
+                system("pause");
+                break;
+        }
+
+    }while(op!=0);
+    return 0;
+}
+void SUB_MENU_RELATORIOS(){
+    int op;
+    do{
+        CABECALHO();
+        printf("%sMenu inicial > Relatórios >%s %sDetalhado%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+        printf("[%s1%s] - Código da solicitante\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Código da solicitação\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s3%s] - Código/nome do espaço\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s4%s] - Agendados\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s5%s] - Em andamento\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s6%s] - Finalizados\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s7%s] - Cancelado\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s8%s] - Todos\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
+
+        printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Escolha o filtro desejado: ");
+        op = VALIDA_ENTRADA_NUMERO();
+
+        switch(op)
+        {
+            case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8:
+                REL_DETALHADO_AGENDAMENTOS(op);
+                break;
+            case 0:
+                MENU_RELATORIOS();
                 break;
             default:
                 printf("\n\n%sAtenção!%s\n",COLOR_RED,COLOR_RESET);
@@ -873,7 +942,7 @@ void LISTAR_USUARIOS(int op){
 }
 void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     STRC_LOGIN LOGIN;
-    char buscar[100];
+    char buscar[100],STR_ID[100];
     int count_usuario,op,posicaoArq = 0;
     boolean validaAlteracao;
 
@@ -886,13 +955,14 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     }
 
     printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-    printf("Digite o e-mail do colaborador que deseja alterar: ");
+    printf("Digite o e-mail ou código do colaborador que deseja alterar: ");
     gets(buscar);
 
     arq = fopen(ARQ_LOGIN,"rb");
 
     while(fread(&LOGIN, sizeof(LOGIN), 1, arq)){
-        if(strcmp(buscar,LOGIN.USUARIO) == 0){
+        sprintf(STR_ID,"%d",LOGIN.ID);
+        if(strcmp(buscar,LOGIN.USUARIO) == 0 || strcmp(buscar,STR_ID) == 0){
             count_usuario++;
             do{
                 validaAlteracao = false;
@@ -906,7 +976,7 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
                 printf("\n[%s0%s] - %sVoltar%s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET);
 
                 printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-                printf("Escolha o filtro desejado: ");
+                printf("Escolha uma opção acima: ");
                 op = VALIDA_ENTRADA_NUMERO();
 
                 switch(op)
@@ -1303,7 +1373,6 @@ void CADASTRA_ESPACO(){
 
 }
 void LISTAR_ESPACO(int op){
-
     STRC_ESPACO ESPACO;
     int count = 0, i;
     char tipoPesquisa[100],confirm,buscar[100];
@@ -1407,9 +1476,9 @@ void ALTERAR_ESPACO(boolean fl_criaCabecalho){
                 printf("\n[%s0%s] - %sVoltar%s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET);
 
                 printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-                printf("Escolha o filtro desejado: ");
+                printf("Escolha uma opção acima: ");
                 op = VALIDA_ENTRADA_NUMERO();
-                
+
                 switch(op)
                 {
                     case 1:
@@ -1686,14 +1755,14 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
     else if (op == 4){
         STATUS_NOVO_ID = 0;
         strcpy(tipo,"Cancelamento");
-    }        
+    }
     else if (op == 5)
         strcpy(tipo,"Histórico");
 
     do {
         CABECALHO();
         printf("%sMenu inicial > Agendamentos >%s %s%s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipo,COLOR_RESET);
-   
+
         posicaoArq = 0;
         fl_liberaLoop = false;
 
@@ -1710,8 +1779,10 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
 
                 if((AGENDAMENTO.USUARIO_ID == session_usuarioID || session_nivelAcesso == 2) && (AGENDAMENTO.STATUS == STATUS_ID || STATUS_ID ==  NULL)){
                     if (op == 5) {
-                        fl_econtrou = true;
-                        count++;
+                        if(AGENDAMENTO.USUARIO_ID == session_usuarioID){
+                            fl_econtrou = true;
+                            count++;
+                        }
                     } else {
                         //AGENDADO - CHECK-IN
                         if(DH_ATUAL_LONG >= AGENDAMENTO.DH_INICIO && AGENDAMENTO.STATUS == STATUS_ID && STATUS_ID == 1){
@@ -1781,7 +1852,7 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
                 if (fl_econtrou == true){
                     CABECALHO();
                     printf("%sMenu inicial > Agendamentos >%s %s%s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipo,COLOR_RESET);
-                    
+
                     if(op == 3 || op == 4) MSG_RETORNO();
 
                     SEPARADOR();
@@ -1827,12 +1898,12 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
                             }
 
                         } while(validacao == false);
-                               
+
                         printf("\n\nDeixe um comentário: ");
                         gets(AGENDAMENTO.OBSERVACAO);
 
                         if(strcmp(AGENDAMENTO.OBSERVACAO,"0") == 0) return 0;
-                    
+
                     //
                     } else if (op == 4) {
 
@@ -2252,6 +2323,129 @@ int VALIDA_DADOS_AGENDAMENTO(char campo[],STRC_AGENDAMENTO *STRC_RETORNO){
     }
     return 1;
 }
+void REL_DETALHADO_AGENDAMENTOS(int op){
+    STRC_AGENDAMENTO AGENDAMENTO;
+    boolean fl_econtrou, validacao;
+    int count = 0,STATUS_ID = -1;
+    char tipo[100],buscar[100],STR_ID[100];
+
+    if (op == 1){
+        strcpy(tipo,"Código do solicitante");
+    }else if (op == 2){
+        strcpy(tipo,"Código da solicitação");
+    }else if (op == 3){
+        strcpy(tipo,"Código do espaço");
+    }else if (op == 4){
+        STATUS_ID = 1;
+        strcpy(tipo,"Angendados");
+    }else if (op == 5){
+        STATUS_ID = 2;
+        strcpy(tipo,"Em andamento");
+    }else if (op == 6){
+        STATUS_ID = 3;
+        strcpy(tipo,"Finalizados");
+    }else if (op == 7){
+        STATUS_ID = 0;
+        strcpy(tipo,"Cancelados");
+    }else if (op == 8){
+        strcpy(tipo,"Todos");
+    }
+
+    CABECALHO();
+    printf("%sMenu inicial > Agendamentos >%s %s%s%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,tipo,COLOR_RESET);
+
+    
+    if(op == 1){
+        MSG_RETORNO();
+
+        do{
+            validacao = false;
+            printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Digite o código do coloborador solicitante: ");
+            gets(buscar);
+            if(strcmp(buscar,"0") == 0) return 0;
+            else if (strlen(buscar) == 0 ){
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("O código é obrigatório...\n\n");
+            }else 
+                validacao = true;
+        }while(validacao == false);
+
+    } else if(op == 2){
+        MSG_RETORNO();
+
+        do{
+            printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Digite o código da solicitação: ");
+            gets(buscar);
+            if(strcmp(buscar,"0") == 0) return 0;
+            else if (strlen(buscar) == 0 ){ 
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("O código é obrigatório...\n\n");
+            }else 
+                validacao = true;
+        }while(validacao == false);
+
+    } else if(op == 3){
+        MSG_RETORNO();
+
+        do{
+            printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+            printf("Digite o código ou nome do espaço: ");
+            gets(buscar);
+            if(strcmp(buscar,"0") == 0) return 0;
+            else if (strlen(buscar) == 0 ){ 
+                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                printf("O código é obrigatório...\n\n");
+            }else 
+                validacao = true;
+        }while(validacao == false);
+    }
+
+
+    //SELECIONA QUAL AGENDAMENTO
+    arq = fopen(ARQ_AGENDAMENTO,"rb");
+    if(arq!=NULL){
+        while(fread(&AGENDAMENTO, sizeof(AGENDAMENTO), 1, arq)){
+            fl_econtrou = false;
+
+            //usuario
+            if(op == 1){
+                sprintf(STR_ID,"%d",AGENDAMENTO.USUARIO_ID);
+                if(strcmp(strupr(buscar),STR_ID) == 0)fl_econtrou = true;
+            //solicitação
+            } else if(op == 2){
+                sprintf(STR_ID,"%d",AGENDAMENTO.ID);
+                if(strcmp(strupr(buscar),STR_ID) == 0) fl_econtrou = true;
+            //espaço
+            } else if(op == 3){
+                sprintf(STR_ID,"%d",AGENDAMENTO.ESPACO_ID);
+                if(strcmp(strupr(buscar),STR_ID) == 0 || strcmp(strupr(buscar),AGENDAMENTO.ESPACO.NOME_ESPACO) == 0) fl_econtrou = true; 
+            //STATUS
+            } else if(op >= 4 && op <= 7) {
+                if(STATUS_ID == AGENDAMENTO.STATUS) fl_econtrou = true; 
+            } else {
+                fl_econtrou = true; 
+            }
+
+            if(fl_econtrou == true){
+                count++;
+                if (count == 1) SEPARADOR();
+                PRINTAR_AGENDAMENTO(&AGENDAMENTO,false,true,true);
+                SEPARADOR();
+            }
+        }
+    }
+    fclose(arq);
+
+    if (count == 0){
+        printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Nenhum agendamento encontrado...");
+    }
+
+    printf("\n\n");
+    system("pause");
+}
 void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspaco, boolean fl_mostrarAvaliacao, boolean  fl_mostrarCancelamento){
 
     char dt[100],avaliacao[100];
@@ -2299,7 +2493,7 @@ void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspac
     }
 
     if((session_nivelAcesso == 2 || AGENDAMENTO->USUARIO_ID == session_usuarioID) && AGENDAMENTO->STATUS == 3 && fl_mostrarAvaliacao == true){
-        
+
         if (AGENDAMENTO->AVALIACAO == 1) strcpy(avaliacao,"Péssimo");
         else if (AGENDAMENTO->AVALIACAO == 2) strcpy(avaliacao,"Ruim");
         else if (AGENDAMENTO->AVALIACAO == 3) strcpy(avaliacao,"Razóavel");
