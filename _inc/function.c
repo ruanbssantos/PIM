@@ -164,7 +164,7 @@ void EXIT(){
 //MSG DE RETORNO
 void MSG_RETORNO(){
     printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-    printf("Para retornar ao menu anterior, digite ""%s0%s"" a qualquer momento...\n",COLOR_YELLOW,COLOR_RESET);
+    printf("Para retornar, digite ""%s0%s"" a qualquer momento...\n",COLOR_YELLOW,COLOR_RESET);
 }
 //FORMATA DATA PARA BR
 void FORMATA_DATA_HORA(char *retorno[],int year, int month, int day, int hour, int min) {
@@ -661,7 +661,7 @@ void MENU_RELATORIOS(){
         CABECALHO();
         printf("%sMenu inicial >%s %sRelatórios%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
         printf("[%s1%s] - Detalhado\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s2%s] - Raking espaço\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Ranking espaço\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s0%s] - Voltar",COLOR_YELLOW,COLOR_RESET);
 
         printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
@@ -943,7 +943,7 @@ void LISTAR_USUARIOS(int op){
 void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     STRC_LOGIN LOGIN;
     char buscar[100],STR_ID[100];
-    int count_usuario,op,posicaoArq = 0;
+    int count_usuario = 0,op,posicaoArq = 0;
     boolean validaAlteracao;
 
     if(fl_criaCabecalho == 1){
@@ -968,6 +968,8 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
                 validaAlteracao = false;
                 CABECALHO();
                 printf("%sMenu inicial > Colaboradores >%s %sAlterar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+                MSG_RETORNO();
+
                 printf("\n[%s1%s] - %sNome:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,LOGIN.NOME_COMPLETO);
                 printf("\n[%s2%s] - %sEmail:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,LOGIN.USUARIO);
                 printf("\n[%s3%s] - %sCelular:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,LOGIN.CELULAR);
@@ -1025,6 +1027,13 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
     }
 
     fclose(arq);
+
+    if (count_usuario == 0){
+        printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Nenhum coloborador encontrado...");
+        printf("\n\n"); 
+        system("pause");
+    }
 
 }
 int VALIDA_DADOS_USUARIO(char campo[],STRC_LOGIN *STRC_RETORNO){
@@ -1443,7 +1452,7 @@ void LISTAR_ESPACO(int op){
 void ALTERAR_ESPACO(boolean fl_criaCabecalho){
     STRC_ESPACO ESPACO;
     char buscar[100], STR_ID[100];
-    int i,count,op,posicaoArq = 0;
+    int i,count = 0,op,posicaoArq = 0;
     boolean validaAlteracao;
 
     if(fl_criaCabecalho == 1){
@@ -1468,6 +1477,8 @@ void ALTERAR_ESPACO(boolean fl_criaCabecalho){
                 validaAlteracao = false;
                 CABECALHO();
                 printf("%sMenu inicial > Colaboradores >%s %sAlterar%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+                MSG_RETORNO();
+
                 printf("\n[%s1%s] - %sNome:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,ESPACO.NOME_ESPACO);
                 printf("\n[%s2%s] - %sCapacidade:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,ESPACO.CAPACIDADE);
                 printf("\n[%s3%s] - %sTipo:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,ESPACO.TP_ESPACO);
@@ -1525,6 +1536,14 @@ void ALTERAR_ESPACO(boolean fl_criaCabecalho){
     }
 
     fclose(arq);
+
+    if (count == 0){
+        printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Nenhum coloborador encontrado...");
+        printf("\n\n"); 
+        system("pause");
+    }
+
 
 }
 int VALIDA_DADOS_ESPACO(char campo[],STRC_ESPACO *STRC_RETORNO){
@@ -2445,6 +2464,108 @@ void REL_DETALHADO_AGENDAMENTOS(int op){
 
     printf("\n\n");
     system("pause");
+}
+void REL_RANKING_AGENDAMENTOS(){
+    STRC_AGENDAMENTO AGENDAMENTO;
+    STRC_ESPACO ESPACO;
+    int qtd_espaco = 0,i;
+    float **matriz,count,avaliacao;
+
+    FILE *arqAux;
+
+    printf("Entrou\n");
+    //BUSCA QUANTOS ESPACOS TEM
+    arq = fopen(ARQ_ESPACO,"rb");
+    if(arq!=NULL){
+        while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){
+            if (ESPACO.STATUS == 1){
+                qtd_espaco++;
+            }
+        }
+    }
+    fclose(arq);
+
+    printf("Espaço localizado: %d\n\n",qtd_espaco);
+
+    if (qtd_espaco > 0) {
+        qtd_espaco;
+        //CRIA MATRIZ DINAMICA
+        matriz = malloc(qtd_espaco *sizeof(float*));
+        for (i=0; i < qtd_espaco; i ++) matriz[i] = malloc(2 *sizeof(float*));
+        
+        //ATRIBUI IDS E QTD 
+        i=0;
+        arq = fopen(ARQ_ESPACO,"rb");
+        if(arq!=NULL){
+            while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){
+                if (ESPACO.STATUS == 1){
+                    
+                    count = 0;
+                    avaliacao = 0;
+                    arqAux = fopen(ARQ_AGENDAMENTO,"rb");
+                    if(arqAux!=NULL){
+                        while(fread(&AGENDAMENTO, sizeof(AGENDAMENTO), 1, arqAux)){
+                            if (AGENDAMENTO.STATUS == 3 && AGENDAMENTO.AVALIACAO != 0 && AGENDAMENTO.ESPACO_ID == ESPACO.ID){
+                                count++;
+                                avaliacao += AGENDAMENTO.AVALIACAO;
+                            }
+                        }
+                    } 
+                    fclose(arqAux);
+
+                    matriz[i][0] = (avaliacao/count);
+                    matriz[i][1] = ESPACO.ID;
+
+                    printf("\n\nI: %d", i);
+                    printf("\nESPACO: %d - %s ", ESPACO.ID,ESPACO.NOME_ESPACO);
+                    printf("\n\tAVALIAÇÃO: %f | %f ", count,avaliacao);
+                    i++;
+                }
+            }
+        }
+        fclose(arq);
+    }
+
+    for (i=0; i < qtd_espaco; i++){
+        printf("\nLinha: %d\n\t AVALIAÇÕES: %.2f | ID: %.0f \n\n",i,matriz[i][0],matriz[i][1]);
+    }
+
+    float value_aux, id_aux;
+    int j;
+    
+    for (i=0; i < qtd_espaco; i++){
+        printf("\nI | V:  %d | %f", i, matriz[i][0]);
+        for (j=i+1; j < qtd_espaco ; j++) {
+            if (matriz[j][0] > matriz[i][0]){
+                value_aux = matriz[i][0];
+                id_aux = matriz[i][1];
+                printf("\n\tValor maior encontrado: %f", matriz[j][0]);
+
+                matriz[i][0] = matriz[j][0];
+                matriz[i][1] = matriz[j][1];
+
+                matriz[j][0] = value_aux;
+                matriz[j][1] = id_aux;
+                printf("\n\t\tNovo valor de I: %f", matriz[i][0]);
+                printf("\n\t\tNovo valor de J: %f\n", matriz[j][0]);
+            }
+
+        }
+
+
+    }
+
+
+    printf("\n\nDepois: \n\n");
+    for (i=0; i < qtd_espaco; i++){
+        printf("%d - Valor: %f | ID: %f\n",i,matriz[i][0],matriz[i][1]);
+    }
+    
+    printf("\n\n\n");
+    system("pause");
+
+
+
 }
 void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspaco, boolean fl_mostrarAvaliacao, boolean  fl_mostrarCancelamento){
 

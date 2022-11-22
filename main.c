@@ -42,7 +42,9 @@ int main(){
 
     // }while (session == 0);
 
-    MENU_PRINCIPAL();  
+    //MENU_PRINCIPAL();  
+
+    REL_RANKING_AGENDAMENTOS();
 
     SetConsoleOutputCP(CPAGE_DEFAULT);
     return 0;
