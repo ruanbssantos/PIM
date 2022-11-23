@@ -674,7 +674,7 @@ void MENU_RELATORIOS(){
                 SUB_MENU_RELATORIOS();
                 break;
             case 2:
-                CABECALHO();
+                REL_RANKING_AGENDAMENTOS();
                 break;
             case 0:
                 MENU_PRINCIPAL();
@@ -2468,12 +2468,15 @@ void REL_DETALHADO_AGENDAMENTOS(int op){
 void REL_RANKING_AGENDAMENTOS(){
     STRC_AGENDAMENTO AGENDAMENTO;
     STRC_ESPACO ESPACO;
-    int qtd_espaco = 0,i;
+    int qtd_espaco = 0,i,fl_encontrou=0;
     float **matriz,count,avaliacao;
 
     FILE *arqAux;
 
-    printf("Entrou\n");
+    CABECALHO();
+    printf("%sMenu inicial > Agendamentos >%s %sRanking espaço%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
+
+
     //BUSCA QUANTOS ESPACOS TEM
     arq = fopen(ARQ_ESPACO,"rb");
     if(arq!=NULL){
@@ -2484,8 +2487,6 @@ void REL_RANKING_AGENDAMENTOS(){
         }
     }
     fclose(arq);
-
-    printf("Espaço localizado: %d\n\n",qtd_espaco);
 
     if (qtd_espaco > 0) {
         qtd_espaco;
@@ -2508,17 +2509,15 @@ void REL_RANKING_AGENDAMENTOS(){
                             if (AGENDAMENTO.STATUS == 3 && AGENDAMENTO.AVALIACAO != 0 && AGENDAMENTO.ESPACO_ID == ESPACO.ID){
                                 count++;
                                 avaliacao += AGENDAMENTO.AVALIACAO;
+                                fl_encontrou = 1;
                             }
                         }
                     } 
                     fclose(arqAux);
-
+    
                     matriz[i][0] = (avaliacao/count);
                     matriz[i][1] = ESPACO.ID;
 
-                    printf("\n\nI: %d", i);
-                    printf("\nESPACO: %d - %s ", ESPACO.ID,ESPACO.NOME_ESPACO);
-                    printf("\n\tAVALIAÇÃO: %f | %f ", count,avaliacao);
                     i++;
                 }
             }
@@ -2526,46 +2525,55 @@ void REL_RANKING_AGENDAMENTOS(){
         fclose(arq);
     }
 
-    for (i=0; i < qtd_espaco; i++){
-        printf("\nLinha: %d\n\t AVALIAÇÕES: %.2f | ID: %.0f \n\n",i,matriz[i][0],matriz[i][1]);
-    }
-
     float value_aux, id_aux;
     int j;
     
     for (i=0; i < qtd_espaco; i++){
-        printf("\nI | V:  %d | %f", i, matriz[i][0]);
         for (j=i+1; j < qtd_espaco ; j++) {
             if (matriz[j][0] > matriz[i][0]){
                 value_aux = matriz[i][0];
                 id_aux = matriz[i][1];
-                printf("\n\tValor maior encontrado: %f", matriz[j][0]);
-
                 matriz[i][0] = matriz[j][0];
                 matriz[i][1] = matriz[j][1];
-
                 matriz[j][0] = value_aux;
                 matriz[j][1] = id_aux;
-                printf("\n\t\tNovo valor de I: %f", matriz[i][0]);
-                printf("\n\t\tNovo valor de J: %f\n", matriz[j][0]);
             }
 
         }
+    }
 
+    int ID_ESPACO;
 
+    if (fl_encontrou == 1){
+            
+        for (i=0; i < qtd_espaco; i++){
+            //printf("%d - Valor: %f | ID: %f\n",i,matriz[i][0],matriz[i][1]);
+
+            arq = fopen(ARQ_ESPACO,"rb");
+            if(arq!=NULL){
+                while(fread(&ESPACO, sizeof(ESPACO), 1, arq)){
+                    ID_ESPACO = matriz[i][1];
+                    
+                    if (ESPACO.ID == ID_ESPACO){
+                        if (i == 0) SEPARADOR();
+                        printf("\n%s#%d%s %s- %s Código: %s%s%d%s%s | Avaliação: %s%s%.1f%s \n",COLOR_PURPLE,(i+1),COLOR_RESET,COLOR_CYAN,ESPACO.NOME_ESPACO,COLOR_RESET,COLOR_YELLOW,ESPACO.ID,COLOR_RESET,COLOR_CYAN,COLOR_RESET,COLOR_GREEN,matriz[i][0],COLOR_RESET);
+                        SEPARADOR();
+                    }
+                }
+            }
+            fclose(arq);        
+        }
+    } else {
+        printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+        printf("Nenhuma avaliação encontrada...");
     }
 
 
-    printf("\n\nDepois: \n\n");
-    for (i=0; i < qtd_espaco; i++){
-        printf("%d - Valor: %f | ID: %f\n",i,matriz[i][0],matriz[i][1]);
-    }
-    
-    printf("\n\n\n");
+
+
+    printf("\n\n");
     system("pause");
-
-
-
+    
 }
 void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspaco, boolean fl_mostrarAvaliacao, boolean  fl_mostrarCancelamento){
 
