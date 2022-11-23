@@ -761,8 +761,8 @@ void SUB_MENU_RELATORIOS(){
     do{
         CABECALHO();
         printf("%sMenu inicial > Relatórios >%s %sDetalhado%s\n\n",COLOR_PURPLE,COLOR_RESET,COLOR_GREEN,COLOR_RESET);
-        printf("[%s1%s] - Código da solicitante\n",COLOR_YELLOW,COLOR_RESET);
-        printf("[%s2%s] - Código da solicitação\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s1%s] - Código do colaborador solicitante\n",COLOR_YELLOW,COLOR_RESET);
+        printf("[%s2%s] - Código do agendamento\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s3%s] - Código/nome do espaço\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s4%s] - Agendados\n",COLOR_YELLOW,COLOR_RESET);
         printf("[%s5%s] - Em andamento\n",COLOR_YELLOW,COLOR_RESET);
@@ -1331,9 +1331,7 @@ void CADASTRA_ESPACO(){
     MSG_RETORNO();
 
     STRC_ESPACO ESPACO;
-    char confirm;
-
-    MSG_RETORNO();
+    char confirm; 
 
     //NOME COMPLETO
     if (VALIDA_DADOS_ESPACO("NOME_ESPACO",&ESPACO) == false) return 0;
@@ -1831,7 +1829,7 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
         //CASO SEJA DIFERENTE DE HISTÓRICO MONTA PARA CONFIRMAÇÃO
         if (count > 0 && op != 5) {
             printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-            printf("Digite o código da solicitação, %s0%s para voltar: ",COLOR_YELLOW,COLOR_RESET);
+            printf("Digite o código do agendamento, %s0%s para voltar: ",COLOR_YELLOW,COLOR_RESET);
             gets(buscar);
 
             if (strcmp(buscar,"0") == 0) {
@@ -1933,7 +1931,7 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
 
                             if(strcmp(AGENDAMENTO.OBSERVACAO,"0") == 0) return 0;
                             else if(strlen(AGENDAMENTO.OBSERVACAO) == 0) {
-                                printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
+                                printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
                                 printf("Motivo do cancelamento é obrigatório...\n");
                             } else {
                                 validacao = true;
@@ -1965,7 +1963,7 @@ void LISTAR_AGENDAMENTOS(int op,int STATUS_ID, int STATUS_NOVO_ID){
 
                 } else {
                     printf("\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-                    printf("Código da solicitação não encontrado...\n\n");
+                    printf("Código do agendamento não encontrado...\n\n");
                     system("pause");
                 }
             }
@@ -2349,9 +2347,9 @@ void REL_DETALHADO_AGENDAMENTOS(int op){
     char tipo[100],buscar[100],STR_ID[100];
 
     if (op == 1){
-        strcpy(tipo,"Código do solicitante");
+        strcpy(tipo,"Código do coloborador solicitante");
     }else if (op == 2){
-        strcpy(tipo,"Código da solicitação");
+        strcpy(tipo,"Código do agendamento");
     }else if (op == 3){
         strcpy(tipo,"Código do espaço");
     }else if (op == 4){
@@ -2395,7 +2393,7 @@ void REL_DETALHADO_AGENDAMENTOS(int op){
 
         do{
             printf("\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
-            printf("Digite o código da solicitação: ");
+            printf("Digite o código do agendamento: ");
             gets(buscar);
             if(strcmp(buscar,"0") == 0) return 0;
             else if (strlen(buscar) == 0 ){ 
@@ -2432,7 +2430,7 @@ void REL_DETALHADO_AGENDAMENTOS(int op){
             if(op == 1){
                 sprintf(STR_ID,"%d",AGENDAMENTO.USUARIO_ID);
                 if(strcmp(strupr(buscar),STR_ID) == 0)fl_econtrou = true;
-            //solicitação
+            //agendamento
             } else if(op == 2){
                 sprintf(STR_ID,"%d",AGENDAMENTO.ID);
                 if(strcmp(strupr(buscar),STR_ID) == 0) fl_econtrou = true;
@@ -2579,7 +2577,7 @@ void PRINTAR_AGENDAMENTO(STRC_AGENDAMENTO *AGENDAMENTO, boolean fl_esconderEspac
 
     char dt[100],avaliacao[100];
 
-    printf("\n%s#Código da solicitação:%s %d\n",COLOR_PURPLE,COLOR_RESET,AGENDAMENTO->ID);
+    printf("\n%s#Código do agendamento:%s %d\n",COLOR_PURPLE,COLOR_RESET,AGENDAMENTO->ID);
     SEPARADOR();
 
     //ASSUNTO
