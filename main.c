@@ -1,4 +1,4 @@
-//=======================================================================================================
+Ôªø//=======================================================================================================
 //INCLUDES
 //=======================================================================================================
 #include "_inc/function.c" //TODAS AS STRUCTS DO SISTEMA
@@ -19,7 +19,7 @@ int main(){
         boolean cadastroFinalizado;
         CADASTRA_USUARIO(true, &cadastroFinalizado);
         if(cadastroFinalizado == false){
-            printf("\n\nObrigado pela visita, atÈ mais...\n");
+            printf("\n\nObrigado pela visita, at√© mais...\n");
             exit(1);
         }
     }
@@ -32,7 +32,7 @@ int main(){
             printf("%s\n\nAcesso permitido, seja bem-vindo!\n\n%s",COLOR_GREEN,COLOR_RESET);
         } else {
             printf("\n\n%sErro!%s\n",COLOR_RED,COLOR_RESET);
-            printf("Acesso negado, usu·rio/senha incorreto...\n\n");
+            printf("Acesso negado, usu√°rio/senha incorreto...\n\n");
         }
 
         system ("pause");

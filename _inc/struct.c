@@ -1,14 +1,14 @@
-//=======================================================================================================
+﻿//=======================================================================================================
 //INCLUDES
 //=======================================================================================================
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> //BIBLIOTECA PARA FUNÃÂÃÂES STRING
+#include <string.h> //BIBLIOTECA PARA FUNÃÂÃÂÃÂÃÂES STRING
 #include <locale.h> //CARACTER ESPECIAL DO PORTUGUES
 #include <windows.h> //USAR COMANDOS DO WINDOWS
 #include <time.h> //PEGAR DATA E HORA DO SISTEMA
-#include <ctype.h> //CONTÉM FUNÇÕES DO TIPO BOOLEANN COMO ISDIGIT
-#include <stdbool.h> //LÊ BOOLEANO
+#include <ctype.h> //CONTÃM FUNÃÃES DO TIPO BOOLEANN COMO ISDIGIT
+#include <stdbool.h> //LÃ BOOLEANO
 #include <conio.h>
 
 typedef struct {
