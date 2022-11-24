@@ -16,6 +16,7 @@ int main(){
     arq = fopen(ARQ_LOGIN,"rb");
 
     if(arq==NULL){
+        CreateDirectory("ARQUIVOS",NULL);
         boolean cadastroFinalizado;
         CADASTRA_USUARIO(true, &cadastroFinalizado);
         if(cadastroFinalizado == false){

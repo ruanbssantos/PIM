@@ -975,6 +975,7 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
                 printf("\n[%s3%s] - %sCelular:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,LOGIN.CELULAR);
                 printf("\n[%s4%s] - %sNível:%s %s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,LOGIN.NIVEL==1?"Comum":"Administrativo");
                 printf("\n[%s5%s] - %sStatus:%s %s%s%s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET,LOGIN.STATUS==1?COLOR_GREEN:COLOR_RED,LOGIN.STATUS==1?"Ativo":"Inativo",COLOR_RESET);
+                printf("\n[%s6%s] - %sSenha%s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET);
                 printf("\n[%s0%s] - %sVoltar%s",COLOR_YELLOW,COLOR_RESET,COLOR_CYAN,COLOR_RESET);
 
                 printf("\n\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
@@ -1002,6 +1003,13 @@ void ALTERAR_USUARIO(boolean fl_criaCabecalho){
                     case 5:
                         //VALIDA STATUS
                         if (VALIDA_DADOS_USUARIO("STATUS",&LOGIN) == true) validaAlteracao = true;
+                        break;
+                    case 6:
+                        //VALIDA SENHA
+                        if (VALIDA_DADOS_USUARIO("SENHA",&LOGIN) == true) validaAlteracao = true;
+                        printf("\n\n%sAtenção!%s\n",COLOR_YELLOW,COLOR_RESET);
+                        printf("Senha alterada com sucesso...\n\n");
+                        system("pause");
                         break;
                     case 0:
                         break;
